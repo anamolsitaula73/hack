@@ -287,3 +287,41 @@ def update_name(request):
 
 class AboutUsView(TemplateView):
     template_name = 'accounts/aboutus.html'
+
+
+
+from django.shortcuts import render, redirect
+import json
+
+from django.shortcuts import render, redirect
+from route_manager.models import Route, BusStop
+import json
+
+def view_all_routes(request):
+    
+
+    # Fetch all saved routes from the database
+    routes = Route.objects.all()
+    bus_stops = BusStop.objects.all()
+
+    # Prepare the routes data to pass to the template
+    route_data = []
+    for route in routes:
+        # Fetch the bus stops for each route
+        route_bus_stops = BusStop.objects.filter(route=route)
+        bus_stops_data = [
+            {'name': bus_stop.name, 'latitude': bus_stop.latitude, 'longitude': bus_stop.longitude}
+            for bus_stop in route_bus_stops
+        ]
+
+        # Add the bus stop data to the route data
+        route_data.append({
+            'route_name': route.route_name,
+            'starting_point': route.starting_point,
+            'destination': route.destination,
+            'route_data': json.loads(route.route_data),  # Convert the route_data JSON back to a list of coordinates
+            'bus_stops': bus_stops_data  # Include bus stops data specific to this route
+        })
+
+    # Pass all bus stops (for the table) and route data (for the map) to the template
+    return render(request, 'accounts/view_saved_routes.html', {'routes': route_data, 'all_bus_stops': bus_stops})

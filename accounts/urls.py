@@ -3,7 +3,7 @@ from django.urls import path,include
 from .views import (signup_view, login_view, logout_view, 
                     home_view, verify_otp_view, resend_otp_view,
                     user_pricing_packages,booked_venues,cancel_booking,my_profile,
-                    CustomPasswordChangeView,update_name,AboutUsView)
+                    CustomPasswordChangeView,update_name,AboutUsView,view_all_routes)
 
 
 urlpatterns = [
@@ -24,5 +24,7 @@ urlpatterns = [
     path('update_name/', update_name, name='update_name'),
     
     path('about/', AboutUsView.as_view(), name='about_us'),
+    path('view-routes', view_all_routes, name='view-routes'),
+
 
 ]

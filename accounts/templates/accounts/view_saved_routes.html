@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Routes</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+
+        #map {
+            width: 100%;
+            height: 50vh;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ccc;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        td {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    {% if user.is_authenticated %}
+    <a href="{% url 'logout' %}" class="logout-button">Logout</a>
+    <a href="{% url 'route_manager_home' %}" class="logout-button">Create Route</a>
+    <a href="{% url 'create_bus_stop' %}" class="logout-button">Create Bus Stop</a>
+
+    {% endif %}
+
+    <h1>Saved Routes</h1>
+
+    <!-- Table displaying saved route data -->
+    <table>
+        <thead>
+            <tr>
+                <th>Route Name</th>
+                <th>Starting Point</th>
+                <th>Destination</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for route in routes %}
+            <tr onclick="showRouteOnMap({{ route.route_data|safe }}, '{{ route.route_name }}', '{{ route.starting_point }}', '{{ route.destination }}')">
+                <td>{{ route.route_name }}</td>
+                <td>{{ route.starting_point }}</td>
+                <td>{{ route.destination }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Bus Stops</h2>
+
+    <!-- Table displaying all bus stops -->
+    <table>
+        <thead>
+            <tr>
+                <th>Bus Stop Name</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+                <th>Route</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bus_stop in all_bus_stops %}
+            <tr>
+                <td>{{ bus_stop.name }}</td>
+                <td>{{ bus_stop.latitude }}</td>
+                <td>{{ bus_stop.longitude }}</td>
+                <td>{{ bus_stop.route }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Map to display the routes -->
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+    <script>
+        // Initialize the map
+        let map = L.map('map').setView([28.2380, 83.9956], 11);
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: 'Leaflet &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>',
+            maxZoom: 18
+        }).addTo(map);
+
+        // Try to get the user's current location
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+        // Get user's current coordinates
+        let userLat = position.coords.latitude;
+        let userLng = position.coords.longitude;
+
+        // Create a simple green marker
+        const greenIcon = L.icon({
+            iconUrl: '/static/images/userloc.png', // Simple green marker
+            iconSize: [32, 41], // Size of the icon
+            iconAnchor: [12, 41], // Anchor point of the icon
+            popupAnchor: [0, -41] // Popup position relative to the icon
+        });
+
+        // Center the map on user's current location
+        map.setView([userLat, userLng], 13); // Adjust zoom level as needed
+
+        // Add a marker at the user's current location with the simple green icon
+        L.marker([userLat, userLng], { icon: greenIcon }).addTo(map)
+            .bindPopup('You are here!')
+            .openPopup();
+    }, function() {
+        // If geolocation fails, fallback to Bharatpur
+        map.setView([28.2380, 83.9956], 11);
+    });
+} else {
+    // If geolocation is not supported, fallback to Bharatpur
+    map.setView([28.2380, 83.9956], 11);
+}
+
+    
+        let routeLine; // Variable to store the route line
+        let markers = []; // Array to store the start and end markers
+        let busStopMarkers = []; // Array to store bus stop markers
+    
+        // Get the bus stop data from the Django context
+        const busStops = [
+            {% for bus_stop in all_bus_stops %}
+                {
+                    name: "{{ bus_stop.name }}",
+                    latitude: {{ bus_stop.latitude }},
+                    longitude: {{ bus_stop.longitude }},
+                    route: "{{ bus_stop.route }}"
+                },
+            {% endfor %}
+        ];
+    
+        // Function to show route on the map and keep bus stops
+        function showRouteOnMap(routeCoordinates, routeName, startingPoint, destination) {
+            // Clear previous route-specific layers (not bus stops)
+            if (routeLine) {
+                map.removeLayer(routeLine);
+            }
+            markers.forEach(marker => map.removeLayer(marker));
+            markers = [];
+    
+            // Parse the route coordinates if it's a JSON string
+            const parsedCoordinates = typeof routeCoordinates === 'string' ? JSON.parse(routeCoordinates) : routeCoordinates;
+    
+            // Add the polyline for the route
+            routeLine = L.polyline(parsedCoordinates.map(coord => [coord.lat, coord.lng]), {
+                color: 'blue',
+                weight: 5
+            }).addTo(map);
+    
+            // Add starting and destination markers
+            const startingLatLng = L.latLng(parsedCoordinates[0].lat, parsedCoordinates[0].lng);
+            const destinationLatLng = L.latLng(parsedCoordinates[parsedCoordinates.length - 1].lat, parsedCoordinates[parsedCoordinates.length - 1].lng);
+    
+            const blueIcon = L.icon({
+                iconUrl: 'https://unpkg.com/leaflet@1.8.0/dist/images/marker-icon.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41]
+            });
+    
+            // Create and add markers
+            const startMarker = L.marker(startingLatLng, { icon: blueIcon }).addTo(map).bindPopup('Starting Point: ' + startingPoint).openPopup();
+            const endMarker = L.marker(destinationLatLng, { icon: blueIcon }).addTo(map).bindPopup('Destination: ' + destination);
+    
+            // Store markers in the array
+            markers.push(startMarker, endMarker);
+    
+            // Fit the map to the route
+            map.fitBounds(routeLine.getBounds());
+        }
+    
+        // Function to display all bus stops on the map
+        function displayAllBusStops() {
+            const redIcon = L.icon({
+                iconUrl: '/static/images/busstop.png',
+                iconSize: [45, 41],
+                iconAnchor: [19, 41]
+            });
+    
+            // Loop through bus stops and add them to the map
+            busStops.forEach(busStop => {
+                const busStopLatLng = L.latLng(busStop.latitude, busStop.longitude);
+                const busStopMarker = L.marker(busStopLatLng, { icon: redIcon })
+                    .addTo(map)
+                    .bindPopup(busStop.name + ' (' + busStop.latitude + ', ' + busStop.longitude + ')');
+                busStopMarkers.push(busStopMarker);
+            });
+        }
+    
+        // Display all bus stops when the page loads
+        displayAllBusStops();
+    </script>
+    
+</body>
+
+</html>
