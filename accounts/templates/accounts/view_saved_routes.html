@@ -13,7 +13,7 @@
             padding: 0;
         }
 
-        h1 {
+        h1, h2 {
             text-align: center;
             padding: 20px 0;
             background-color: #f4f4f4;
@@ -31,14 +31,11 @@
             border-collapse: collapse;
         }
 
-        table,
-        th,
-        td {
+        table, th, td {
             border: 1px solid #ccc;
         }
 
-        th,
-        td {
+        th, td {
             padding: 10px;
             text-align: left;
         }
@@ -54,7 +51,6 @@
     <a href="{% url 'logout' %}" class="logout-button">Logout</a>
     <a href="{% url 'route_manager_home' %}" class="logout-button">Create Route</a>
     <a href="{% url 'create_bus_stop' %}" class="logout-button">Create Bus Stop</a>
-
     {% endif %}
 
     <h1>Saved Routes</h1>
@@ -103,6 +99,30 @@
         </tbody>
     </table>
 
+    <h2>Venue Owner Details</h2>
+
+    <!-- Table displaying venue owner details -->
+    <table>
+        <thead>
+            <tr>
+                <th>Owner Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Venue Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for owner in venue_owners %}
+            <tr>
+                <td>{{ owner.name }}</td>
+                <td>{{ owner.email }}</td>
+                <td>{{ owner.phone }}</td>
+                <td>{{ owner.venue_name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
     <!-- Map to display the routes -->
     <div id="map"></div>
 
@@ -116,42 +136,33 @@
         }).addTo(map);
 
         // Try to get the user's current location
-if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-        // Get user's current coordinates
-        let userLat = position.coords.latitude;
-        let userLng = position.coords.longitude;
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                let userLat = position.coords.latitude;
+                let userLng = position.coords.longitude;
 
-        // Create a simple green marker
-        const greenIcon = L.icon({
-            iconUrl: '/static/images/userloc.png', // Simple green marker
-            iconSize: [32, 41], // Size of the icon
-            iconAnchor: [12, 41], // Anchor point of the icon
-            popupAnchor: [0, -41] // Popup position relative to the icon
-        });
+                const greenIcon = L.icon({
+                    iconUrl: '/static/images/userloc.png',
+                    iconSize: [32, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [0, -41]
+                });
 
-        // Center the map on user's current location
-        map.setView([userLat, userLng], 13); // Adjust zoom level as needed
+                map.setView([userLat, userLng], 13);
+                L.marker([userLat, userLng], { icon: greenIcon }).addTo(map)
+                    .bindPopup('You are here!')
+                    .openPopup();
+            }, function() {
+                map.setView([28.2380, 83.9956], 11);
+            });
+        } else {
+            map.setView([28.2380, 83.9956], 11);
+        }
 
-        // Add a marker at the user's current location with the simple green icon
-        L.marker([userLat, userLng], { icon: greenIcon }).addTo(map)
-            .bindPopup('You are here!')
-            .openPopup();
-    }, function() {
-        // If geolocation fails, fallback to Bharatpur
-        map.setView([28.2380, 83.9956], 11);
-    });
-} else {
-    // If geolocation is not supported, fallback to Bharatpur
-    map.setView([28.2380, 83.9956], 11);
-}
+        let routeLine;
+        let markers = [];
+        let busStopMarkers = [];
 
-    
-        let routeLine; // Variable to store the route line
-        let markers = []; // Array to store the start and end markers
-        let busStopMarkers = []; // Array to store bus stop markers
-    
-        // Get the bus stop data from the Django context
         const busStops = [
             {% for bus_stop in all_bus_stops %}
                 {
@@ -162,55 +173,45 @@ if (navigator.geolocation) {
                 },
             {% endfor %}
         ];
-    
-        // Function to show route on the map and keep bus stops
+
         function showRouteOnMap(routeCoordinates, routeName, startingPoint, destination) {
-            // Clear previous route-specific layers (not bus stops)
             if (routeLine) {
                 map.removeLayer(routeLine);
             }
             markers.forEach(marker => map.removeLayer(marker));
             markers = [];
-    
-            // Parse the route coordinates if it's a JSON string
+
             const parsedCoordinates = typeof routeCoordinates === 'string' ? JSON.parse(routeCoordinates) : routeCoordinates;
-    
-            // Add the polyline for the route
+
             routeLine = L.polyline(parsedCoordinates.map(coord => [coord.lat, coord.lng]), {
                 color: 'blue',
                 weight: 5
             }).addTo(map);
-    
-            // Add starting and destination markers
+
             const startingLatLng = L.latLng(parsedCoordinates[0].lat, parsedCoordinates[0].lng);
             const destinationLatLng = L.latLng(parsedCoordinates[parsedCoordinates.length - 1].lat, parsedCoordinates[parsedCoordinates.length - 1].lng);
-    
+
             const blueIcon = L.icon({
                 iconUrl: 'https://unpkg.com/leaflet@1.8.0/dist/images/marker-icon.png',
                 iconSize: [25, 41],
                 iconAnchor: [12, 41]
             });
-    
-            // Create and add markers
+
             const startMarker = L.marker(startingLatLng, { icon: blueIcon }).addTo(map).bindPopup('Starting Point: ' + startingPoint).openPopup();
             const endMarker = L.marker(destinationLatLng, { icon: blueIcon }).addTo(map).bindPopup('Destination: ' + destination);
-    
-            // Store markers in the array
+
             markers.push(startMarker, endMarker);
-    
-            // Fit the map to the route
+
             map.fitBounds(routeLine.getBounds());
         }
-    
-        // Function to display all bus stops on the map
+
         function displayAllBusStops() {
             const redIcon = L.icon({
                 iconUrl: '/static/images/busstop.png',
                 iconSize: [45, 41],
                 iconAnchor: [19, 41]
             });
-    
-            // Loop through bus stops and add them to the map
+
             busStops.forEach(busStop => {
                 const busStopLatLng = L.latLng(busStop.latitude, busStop.longitude);
                 const busStopMarker = L.marker(busStopLatLng, { icon: redIcon })
@@ -219,11 +220,9 @@ if (navigator.geolocation) {
                 busStopMarkers.push(busStopMarker);
             });
         }
-    
-        // Display all bus stops when the page loads
+
         displayAllBusStops();
     </script>
-    
 </body>
 
 </html>

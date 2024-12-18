@@ -290,19 +290,16 @@ class AboutUsView(TemplateView):
 
 
 
-from django.shortcuts import render, redirect
-import json
-
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from route_manager.models import Route, BusStop
+from owner.models import VenueOwner  # Import VenueOwner model
 import json
 
 def view_all_routes(request):
-    
-
-    # Fetch all saved routes from the database
+    # Fetch all saved routes, bus stops, and venue owners from the database
     routes = Route.objects.all()
     bus_stops = BusStop.objects.all()
+    venue_owners = VenueOwner.objects.all()  # Fetch all VenueOwner instances
 
     # Prepare the routes data to pass to the template
     route_data = []
@@ -314,14 +311,32 @@ def view_all_routes(request):
             for bus_stop in route_bus_stops
         ]
 
-        # Add the bus stop data to the route data
+        # Fetch VenueOwner associated with the route (if any)
+        venue_owner_data = None
+        venue_owner = venue_owners.filter(route=route).first()  # Get the first venue owner for this route
+        if venue_owner:
+            venue_owner_data = {
+                'username': venue_owner.user,
+                'registration_number': venue_owner.bus_registration_number,
+                'registration_photo': venue_owner.bus_registration_photo.url if venue_owner.bus_registration_photo else None,
+                'verified': venue_owner.verified,
+                'latitude': venue_owner.latitude,
+                'longitude': venue_owner.longitude,
+                'timestamp': venue_owner.timestamp
+            }
+
+        # Add the bus stop and venue owner data to the route data
         route_data.append({
             'route_name': route.route_name,
             'starting_point': route.starting_point,
             'destination': route.destination,
             'route_data': json.loads(route.route_data),  # Convert the route_data JSON back to a list of coordinates
-            'bus_stops': bus_stops_data  # Include bus stops data specific to this route
+            'bus_stops': bus_stops_data,  # Include bus stops data specific to this route
+            'venue_owner': venue_owner_data  # Include venue owner data for this route
         })
 
-    # Pass all bus stops (for the table) and route data (for the map) to the template
-    return render(request, 'accounts/view_saved_routes.html', {'routes': route_data, 'all_bus_stops': bus_stops})
+    # Pass all bus stops, route data, and venue owners to the template
+    return render(request, 'accounts/view_saved_routes.html', {
+        'routes': route_data,
+        'all_bus_stops': bus_stops
+    })
