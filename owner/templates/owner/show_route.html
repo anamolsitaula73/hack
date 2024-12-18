@@ -4,6 +4,8 @@
     <title>Real-Time Location</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <style>
         #map {
             height: 500px;
@@ -23,8 +25,7 @@
             margin-top: 20px;
         }
 
-        th,
-        td {
+        th, td {
             border: 1px solid #ddd;
             padding: 8px;
         }
@@ -64,8 +65,12 @@
     </div>
 
     <script>
-        // Initialize map
-        const map = L.map('map').setView([27.700769, 85.300140], 13); // Default location
+        // Initialize map and set initial view
+        const initialLat = 27.700769;
+        const initialLng = 85.300140;
+        const initialZoom = 13;  // Starting zoom level
+
+        const map = L.map('map').setView([initialLat, initialLng], initialZoom);
 
         // Add map tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -80,24 +85,30 @@
         });
 
         // Initialize marker
-        let busMarker = L.marker([27.700769, 85.300140], { icon: busIcon }).addTo(map);
+        let busMarker = L.marker([initialLat, initialLng], { icon: busIcon }).addTo(map);
 
-        // Fetch latest location every 5 seconds
+        // Function to fetch the latest location
         function fetchLocation() {
-            fetch('/api/get-latest-location/')
-                .then(response => response.json())
-                .then(data => {
+            $.ajax({
+                url: '/api/get-latest-location/',  // URL for your API endpoint
+                method: 'GET',
+                success: function(data) {
                     if (data.latitude && data.longitude) {
                         const newLatLng = [data.latitude, data.longitude];
                         busMarker.setLatLng(newLatLng);  // Update marker position
-                        map.setView(newLatLng, 13);     // Center map on new location
+                        map.setView(newLatLng, map.getZoom()); // Keep the zoom level intact
                     } else {
                         console.error("Location fetch failed:", data.error);
                     }
-                });
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX error:", status, error);
+                }
+            });
         }
 
-        setInterval(fetchLocation, 5000);  // Update every 5 seconds
+        // Fetch location every 2 seconds
+        setInterval(fetchLocation, 2000);  // Update every 2 seconds
 
         // Extract route data from the backend
         const routeData = JSON.parse('{{ owner_route.route_data|escapejs }}'); // Polyline data
@@ -117,7 +128,7 @@
         // Fit map to route
         map.fitBounds(routePolyline.getBounds());
 
-        // Add custom icons
+        // Add custom icons for bus stops, start and destination points
         const busStopIcon = L.icon({
             iconUrl: '/static/images/busstop.png',
             iconSize: [45, 41],

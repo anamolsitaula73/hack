@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from tinymce.models import HTMLField
 from route_manager.models import Route 
+from datetime import datetime
 
 class VenueOwner(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -10,6 +11,9 @@ class VenueOwner(models.Model):
     bus_registration_photo = models.ImageField(upload_to='business_registrations/')
     verified = models.BooleanField(default=False)
     route = models.ForeignKey(Route, on_delete=models.SET_NULL, null=True, blank=True)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+    timestamp = models.DateTimeField(default=datetime.now)
 
     def __str__(self):
         return self.user.username

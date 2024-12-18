@@ -547,30 +547,84 @@ def show_owner_route(request):
     # Fetch all bus stops associated with the owner's route
     bus_stops = BusStop.objects.filter(route=owner_route)
 
-    # Pass data to the template
+    # Pass data to the template, including the venue owner's location (latitude and longitude)
     return render(request, 'owner/show_route.html', {
         'owner_route': owner_route,
-        'bus_stops': bus_stops
+        'bus_stops': bus_stops,
+        'owner': venue_owner  # Pass the venue owner object to get latitude and longitude
     })
 
-from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from .models import BusLocation
+from .models import VenueOwner
 
 class GetLatestLocationView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        location = BusLocation.objects.filter(owner=request.user).last()
-        if location:
+        try:
+            # Fetch the VenueOwner associated with the logged-in user
+            venue_owner = VenueOwner.objects.get(user=request.user)
+            
+            # Get the latitude and longitude from the VenueOwner
+            latitude = venue_owner.latitude
+            longitude = venue_owner.longitude
+
             return Response({
-                "latitude": location.latitude,
-                "longitude": location.longitude,
-                "timestamp": location.timestamp,
+                "latitude": latitude,
+                "longitude": longitude,
+                 # Assuming you have an updated_at field for when the location was last updated
             })
-        return Response({"error": "No location data found"}, status=404)\
-        
+        except VenueOwner.DoesNotExist:
+            return Response({"error": "VenueOwner not found for the logged-in user"}, status=404)
 
+    
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
+from django.utils.timezone import now
+from .models import VenueOwner
+import logging
 
+# Setting up a logger for better debugging
+logger = logging.getLogger(__name__)
 
+@csrf_exempt  # Disable CSRF for simplicity (use CSRF protection in production)
+def update_location(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)  # Parse the JSON data
+            latitude = data.get('latitude')
+            longitude = data.get('longitude')
+
+            # Log the data received
+            logger.debug(f"Received data: Latitude = {latitude}, Longitude = {longitude}")
+
+            # Validate if latitude and longitude are provided
+            if latitude is None or longitude is None:
+                logger.error("Latitude or Longitude is missing.")
+                return JsonResponse({"status": "error", "message": "Latitude or Longitude is missing."}, status=400)
+
+            # Assuming the user is logged in
+            venue_owner = get_object_or_404(VenueOwner, user=request.user)
+            venue_owner.latitude = latitude
+            venue_owner.longitude = longitude
+            venue_owner.timestamp = now()  # Update the timestamp
+            venue_owner.save()
+
+            # Log successful update
+            logger.debug(f"Venue owner location updated: {venue_owner.latitude}, {venue_owner.longitude}")
+
+            return JsonResponse({"status": "success", "message": "Location updated successfully."}, status=200)
+
+        except json.JSONDecodeError:
+            logger.error("Failed to decode JSON from request.")
+            return JsonResponse({"status": "error", "message": "Invalid JSON format."}, status=400)
+
+        except Exception as e:
+            logger.error(f"Error occurred while updating location: {e}")
+            return JsonResponse({"status": "error", "message": f"An error occurred: {str(e)}"}, status=500)
+
+    return JsonResponse({"status": "error", "message": "Invalid request method."}, status=400)
