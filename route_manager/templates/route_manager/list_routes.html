@@ -1,0 +1,9 @@
+<h2>Saved Routes</h2>
+<ul>
+    {% for route in routes %}
+    <li>
+        <strong>{{ route.name }}</strong>:
+        {{ route.start_lat }}, {{ route.start_lng }} to {{ route.end_lat }}, {{ route.end_lng }}
+    </li>
+    {% endfor %}
+</ul>

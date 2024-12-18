@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Booking Requested</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            background-color: #007bff; /* Blue header background */
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            padding: 20px;
+        }
+        .content p {
+            margin: 0 0 10px;
+        }
+        .content ul {
+            padding: 0;
+            list-style: none;
+        }
+        .content ul li {
+            background: #007bff; /* Blue list item background */
+            color: #fff;
+            padding: 10px;
+            margin: 0 0 10px;
+            border-radius: 5px;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f4f9;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>Booking Requested</h1>
+        </div>
+        <div class="content">
+            <p>Dear {{ user.username }},</p>
+            <p>Your booking at {{ venue.name }} has been requested.</p>
+            
+            <p>Thank you for using our service.</p>
+        </div>
+        <div class="footer">
+            <p>&copy; 2024 Event Planner. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

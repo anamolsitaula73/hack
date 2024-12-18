@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}My Site{% endblock %}</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="{% url 'event_list' %}">My Events</a></li>
+            <li><a href="{% url 'create_event' %}">Create Event</a></li>
+            <li><a href="{% url 'venue_list' %}">My Venues</a></li>
+            <li><a href="{% url 'register_venue' %}">Register Venue</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+    </nav>
+    {% block content %}
+    {% endblock %}
+</body>
+</html>

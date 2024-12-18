@@ -1,0 +1,89 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}Booking Success{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="booking-success">
+        <h2>Booking Requested!</h2>
+        <div class="booking-details">
+            <p>Thank you for using our service.  <strong>Wait for {{ booking.venue.name }} to confirm booking</strong>.</p>
+            <ul>
+                <li><strong>Date:</strong> {{ booking.date }}</li>
+                <li><strong>Time:</strong> {{ booking.time }}</li>
+                <li><strong>Number of Guests:</strong> {{ booking.number_of_guests }}</li>
+            </ul>
+        </div>
+        <div class="home-link">
+            <a href="{% url 'home' %}" class="btn btn-primary">Go to Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .booking-success {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .booking-success h2 {
+        color: #007bff;
+        font-size: 2.5em;
+        margin-bottom: 20px;
+    }
+
+    .booking-details {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .booking-details ul {
+        list-style-type: none;
+        padding: 0;
+        text-align: left;
+    }
+
+    .booking-details ul li {
+        margin-bottom: 10px;
+    }
+
+    .home-link {
+        text-align: center;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-size: 16px;
+        text-decoration: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+</style>
+{% endblock %}

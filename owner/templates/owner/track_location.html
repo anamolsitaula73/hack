@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Real-Time Location</title>
+    <script>
+        function fetchLocation() {
+            fetch('/api/get-latest-location/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('location').innerText = data.error;
+                } else {
+                    document.getElementById('location').innerText = 
+                        `Latitude: ${data.latitude}, Longitude: ${data.longitude}`;
+                }
+            });
+        }
+
+        setInterval(fetchLocation, 5000);  // Update every 5 seconds
+    </script>
+</head>
+<body>
+    <h1>Real-Time Location Tracking</h1>
+    <p id="location">Fetching location...</p>
+</body>
+</html>

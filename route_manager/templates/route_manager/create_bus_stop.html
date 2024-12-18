@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Bus Stop</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 50vh;
+            width: 100%;
+        }
+
+        .form-container {
+            padding: 20px;
+            margin: auto;
+            width: 80%;
+            max-width: 400px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container input,
+        .form-container select,
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-container button {
+            background: #007bff;
+            color: white;
+            border: none;
+        }
+
+        .form-container button:hover {
+            background: #0056b3;
+        }
+
+        .errorlist {
+            color: red;
+            list-style-type: none;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align: center;">Add a New Bus Stop</h1>
+    <div id="map"></div>
+
+    <div class="form-container">
+        <form method="POST" action="{% url 'save_bus_stop' %}">
+            {% csrf_token %}
+            <input type="text" id="latitude" name="latitude" placeholder="latitude" readonly required>
+            <input type="text" id="longitude" name="longitude" placeholder="longitude" readonly required>
+            <input type="text" name="name" placeholder="Bus Stop Name" required>
+            <select name="route" required>
+                <option value="">Select Route</option>
+                {% for route in routes %}
+                    <option value="{{ route.id }}">{{ route.route_name }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Save Bus Stop</button>
+        </form>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+    <script>
+        // Initialize map
+        const map = L.map('map').setView([28.2380, 83.9956], 13);
+
+        // Add tile layer
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a>'
+        }).addTo(map);
+
+                     // Try to get the user's current location
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+        // Get user's current coordinates
+        let userLat = position.coords.latitude;
+        let userLng = position.coords.longitude;
+
+        // Create a simple green marker
+        const greenIcon = L.icon({
+            iconUrl: '/static/images/userloc.png', // Simple green marker
+            iconSize: [32, 41], // Size of the icon
+            iconAnchor: [12, 41], // Anchor point of the icon
+            popupAnchor: [0, -41] // Popup position relative to the icon
+        });
+
+        // Center the map on user's current location
+        map.setView([userLat, userLng], 13); // Adjust zoom level as needed
+
+        // Add a marker at the user's current location with the simple green icon
+        L.marker([userLat, userLng], { icon: greenIcon }).addTo(map)
+            .bindPopup('You are here!')
+            .openPopup();
+    }, function() {
+        // If geolocation fails, fallback to Bharatpur
+        map.setView([28.2380, 83.9956], 11);
+    });
+} else {
+    // If geolocation is not supported, fallback to Bharatpur
+    map.setView([28.2380, 83.9956], 11);
+}
+
+        let marker;
+
+        // Handle map clicks
+        map.on('click', function (e) {
+            const { lat, lng } = e.latlng;
+
+            // Add or move marker
+            if (marker) {
+                marker.setLatLng([lat, lng]);
+            } else {
+                marker = L.marker([lat, lng]).addTo(map);
+            }
+
+            // Update hidden latitude and longitude inputs
+            document.getElementById('latitude').value = lat.toFixed(6);
+            document.getElementById('longitude').value = lng.toFixed(6);
+        });
+    </script>
+</body>
+
+</html>

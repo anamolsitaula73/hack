@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Booking Requested</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e9f2f9; /* Light blue background */
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border: 2px solid #007bff; /* Blue border */
+        }
+
+        h2 {
+            color: #007bff; /* Blue color */
+            font-size: 1.8em;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f1f9ff; /* Very light blue */
+            border-radius: 5px;
+            border: 1px solid #cce5ff; /* Light blue border */
+        }
+
+        p {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .thank-you {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .highlight {
+            color: #007bff; /* Blue for highlights */
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>New Booking Request Notification</h2>
+        <p>Dear {{ owner.username }},</p>
+        <p>Your venue <strong class="highlight">{{ venue.name }}</strong> has a new booking request.</p>
+        <p>Booking Details:</p>
+        <ul>
+            <li><strong class="highlight">Booked by:</strong> {{ booking.user.username }}</li>
+            <li><strong class="highlight">User Email:</strong> {{ booking.user.email }}</li>
+            <li><strong class="highlight">Venue:</strong> {{ venue.name }}</li>
+            <li><strong class="highlight">Address:</strong> {{ venue.address }}</li>
+            <li><strong class="highlight">Date Booked:</strong> {{ booking.date }}</li>
+            <li><strong class="highlight">Time Booked:</strong> {{ booking.time }}</li>
+        </ul>
+        <p class="thank-you">Thank you for using our service.</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,146 @@
+{% extends 'owner/base.html' %}
+
+{% block title %}View Bookings{% endblock %}
+
+{% block content %}
+<div class="container booking-container">
+    <h1>Bookings for {{ venue.name }}</h1>
+    <h5>Total Slots: {{ venue.total_slots }}</h5>
+    <h5>Occupied: {{ venue.occupancy }}</h5>
+    <h5>Available: {{ venue.available_slots }}</h5>
+    <br>
+    {% if bookings %}
+        <ul class="list-group">
+            {% for booking in bookings %}
+                <li class="list-group-item {% if booking.confirmed %}confirmed{% else %}pending{% endif %}">
+                    <h3>{{ booking.user.username }}</h3>
+                    <p><strong>Email:</strong> {{ booking.user.email }}</p>
+                    <p><strong>Date Booked:</strong> {{ booking.date }}</p>
+                    <p><strong>Time Booked:</strong> {{ booking.time }}</p>
+                    <p><strong>Number of Guests:</strong> {{ booking.number_of_guests }}</p>
+
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            {% if not booking.confirmed %}
+                                <form method="post" action="{% url 'confirm_booking' booking.id %}" onsubmit="return confirmBooking()" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary">Confirm Booking</button>
+                                </form>
+                            {% endif %}
+                            {% if booking.confirmed and not booking.checked_out %}
+                                <form method="post" action="{% url 'check_out_booking' booking.id %}" onsubmit="return confirmCheckOut()" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success">Checked Out</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                        <div>
+                            {% if not booking.checked_out %}
+                                <form method="post" action="{% url 'cancel_owner_booking' booking.id %}" onsubmit="return confirmCancel()" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">Cancel Booking</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No bookings found for this venue.</p>
+    {% endif %}
+</div>
+
+<script>
+    function confirmCancel() {
+        return confirm('Are you sure you want to cancel this booking?');
+    }
+
+    function confirmBooking() {
+        return confirm('Are you sure you want to confirm this booking?');
+    }
+
+    function confirmCheckOut() {
+        return confirm('Are you sure you want to mark this booking as checked out?');
+    }
+</script>
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .booking-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border: 3px solid #ff6600; /* Orange border */
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .booking-container:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .list-group-item {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        padding: 15px;
+        background-color: #f9f9f9;
+        transition: background-color 0.3s ease;
+    }
+
+    .list-group-item.pending {
+        background-color: #fff3e0; /* Light orange */
+    }
+
+    .list-group-item.confirmed {
+        background-color: #e8f5e9; /* Light green */
+    }
+
+    .list-group-item:hover {
+        background-color: #f1f8e9; /* Very light green for hover */
+    }
+
+    .btn {
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-size: 16px;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: #007bff; /* Blue */
+        border: none;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3; /* Darker blue */
+    }
+
+    .btn-success {
+        background-color: #28a745; /* Green */
+        border: none;
+        color: white;
+    }
+
+    .btn-success:hover {
+        background-color: #218838; /* Darker green */
+    }
+
+    .btn-danger {
+        background-color: red; /* Red */
+        border: none;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333; /* Darker red */
+    }
+</style>
+{% endblock %}

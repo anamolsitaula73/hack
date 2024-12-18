@@ -1,0 +1,53 @@
+{% extends 'owner/base.html' %}
+
+{% block title %}View Bookings{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Error</title>
+    <style>
+     
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 18px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 20px;
+            background-color: #007bff;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+            color: #ffffff;
+
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Booking Error</h1>
+        <p>{{ message }}</p>
+        <a href="{% url 'venue_detail' %}" class="button">View Bookings</a>
+    </div>
+</body>
+</html>
+{% endblock %}

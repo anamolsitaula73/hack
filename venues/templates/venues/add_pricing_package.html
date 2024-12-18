@@ -1,0 +1,11 @@
+{% extends 'accounts/base.html' %}
+{% block content %}
+
+<!-- venues/templates/venues/add_pricing_package.html -->
+<h2>Add Pricing Package for {{ venue.name }}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Package</button>
+</form>
+{% endblock %}

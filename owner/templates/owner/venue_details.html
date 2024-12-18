@@ -1,0 +1,438 @@
+{% extends 'owner/base.html' %}
+
+{% block title %}Venues{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* General Body Styling */
+    body {
+        background-color: #f0f2f5;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .venue-detail-container {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        padding: 20px;
+        background-color: #fff;
+        border: 2px solid orange; /* Orange border */
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .venue-detail-heading {
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .venue-item {
+        background-color: #f9f9f9;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .venue-item:hover {
+        transform: scale(1.02);
+        background-color: #e9ecef;
+    }
+
+    .venue-item a {
+        display: inline-block;
+        background-color: #007bff; /* Blue */
+        color: #fff;
+        text-decoration: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: bold;
+        text-transform: uppercase;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        margin-right: 10px;
+    }
+
+    .venue-item a:hover {
+        background-color: #0056b3; /* Darker Blue */
+        transform: scale(1.05);
+    }
+
+    .venue-details {
+        margin-bottom: 20px;
+    }
+
+    .edit-venue-container {
+        margin-top: 20px;
+    }
+
+    .edit-form {
+        margin-top: 20px;
+        border: 1px solid #ddd;
+        padding: 20px;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .edit-form label {
+        font-weight: bold;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .edit-form input[type="text"],
+    .edit-form input[type="email"],
+    .edit-form textarea,
+    .edit-form input[type="number"],
+    .edit-form input[type="file"] {
+        width: calc(100% - 40px);
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        font-size: 14px;
+        background-color: #fff;
+        transition: border-color 0.3s ease;
+    }
+
+    .edit-form input[type="text"]:focus,
+    .edit-form input[type="email"]:focus,
+    .edit-form textarea:focus,
+    .edit-form input[type="number"]:focus,
+    .edit-form input[type="file"]:focus {
+        border-color: #ff9800; /* Orange border on focus */
+    }
+
+    .edit-form textarea {
+        height: 120px;
+    }
+
+    .edit-form button {
+        background-color: #ff9800; /* Orange button */
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        font-size: 16px;
+        margin-top: 10px;
+    }
+
+    .edit-form button:hover {
+        background-color: #e68900; /* Darker Orange on hover */
+        transform: scale(1.05);
+    }
+
+    .uploaded-image {
+        max-width: 300px;
+        max-height: 300px;
+        width: 300px;
+        height: 300px;
+        display: block;
+        margin: 0 auto;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        cursor: pointer;
+    }
+
+    .uploaded-image:hover {
+        transform: scale(1.05);
+    }
+
+    .no-venues-message {
+        color: #666;
+        margin-bottom: 20px;
+    }
+
+    .register-venue-link {
+        display: inline-block;
+        background-color: #007bff; /* Blue */
+        color: #fff;
+        text-decoration: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: bold;
+        text-transform: uppercase;
+        transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+    }
+
+    .register-venue-link:hover {
+        background-color: #0056b3; /* Darker Blue */
+        color: #fff;
+        transform: scale(1.05);
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+        transition: opacity 0.3s ease;
+    }
+
+    .modal-content {
+        background-color: #fff;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 0.5s ease;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        transition: color 0.3s ease;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .error-message {
+        color: red;
+        margin-bottom: 20px;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="venue-detail-container">
+    <h2 class="venue-detail-heading">Bus Detail</h2>
+
+    {% if error_message %}
+        <p class="error-message">{{ error_message }}</p>
+    {% endif %}
+
+    {% if venues %}
+        <ul>
+            {% for venue in venues %}
+                <div class="venue-item">
+                    <h3>{{ venue.name }}</h3>
+
+                    {% if venue.image %}
+                        <img src="{{ venue.image.url }}" alt="Venue Image" class="uploaded-image" onclick="openImageModal('{{ venue.id }}')">
+                    {% else %}
+                        <p>No image available.</p>
+                        <a href="#" class="register-venue-link" onclick="openImageModal('{{ venue.id }}')">Add Image</a>
+                    {% endif %}
+
+                    <div class="edit-venue-container">
+                        <form method="post" action="{% url 'edit_venue' pk=venue.id %}" enctype="multipart/form-data" class="edit-form">
+                            {% csrf_token %}
+                            <p><label for="id_name">Name:</label> <input type="text" name="name" id="id_name" value="{{ venue.driver_name }}"></p>
+                            <p><label for="id_address">Address:</label> <input type="text" name="address" id="id_address" value="{{ venue.address }}"></p>
+                            <p><label for="id_description">Description:</label> <textarea name="description" id="id_description">{{ venue.description }}</textarea></p>
+                            <p><label for="id_contact_email">Contact Email:</label> <input type="email" name="contact_email" id="id_contact_email" value="{{ venue.contact_email }}" readonly></p>
+                            <p><label for="id_contact_num">Contact Number:</label> <input type="number" name="contact_num" id="id_contact_num" value="{{ venue.contact_num }}"></p>
+                            <p><label for="id_zip_code">Zip Code:</label> <input type="text" name="zip_code" id="id_zip_code" value="{{ venue.zip_code }}"></p>
+                            <p><label for="id_available_slots">Available Slots:</label> <input type="number" name="available_slots" id="id_available_slots" value="{{ venue.seats_available }}" readonly></p>
+                            <p><label for="id_occupancy">Occupancy:</label> <input type="number" name="occupancy" id="id_occupancy" value="{{ venue.occupancy }}"  readonly></p>
+                            <p><label for="id_total_slots">Total Slots:</label> <input type="number" name="total_slots" id="id_total_slots" value="{{ venue.seats }}"></p>
+                            <button type="submit">Save</button>
+                        </form>
+                    </div>
+                    <br>
+                    <center>
+                    <a href="{% url 'owner_pricing_packages' venue.id %}" class="venue-item a">View Packages</a>
+                    <a href="{% url 'owner_add_pricing_package' venue.id %}" class="venue-item a">Add Package</a>
+                    <a href="{% url 'view_bookings' venue.id %}" class="venue-item a">View Bookings</a>
+                    <a href="{% url 'show_owner_route' %}" class="venue-item a">Show Route</a>
+
+
+                    </center>
+                    <!-- The Modal for Image Upload -->
+                    <div id="image-modal-{{ venue.id }}" class="modal">
+                        <div class="modal-content">
+                            <span class="close" onclick="closeImageModal('{{ venue.id }}')">&times;</span>
+                            <form method="post" action="{% url 'edit_venue_image' venue.id %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <label for="id_image_{{ venue.id }}">Upload Image:</label>
+                                <input type="file" name="image" id="id_image_{{ venue.id }}">
+                                <button type="submit">Upload</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="no-venues-message">No venues found for your email.</p>
+        <a href="{% url 'home_owner' %}" class="register-venue-link">Register Your Bus Detail</a>
+    {% endif %}
+</div>
+
+<script>
+    function openImageModal(id) {
+        var modal = document.getElementById('image-modal-' + id);
+        modal.style.display = 'block';
+        setTimeout(function() {
+            modal.style.opacity = 1;
+        }, 10);
+    }
+
+    function closeImageModal(id) {
+        var modal = document.getElementById('image-modal-' + id);
+        modal.style.opacity = 0;
+        setTimeout(function() {
+            modal.style.display = 'none';
+        }, 300);
+    }
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Real-Time Location</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        #map {
+            height: 500px;
+            width: 100%;
+            margin-top: 20px;
+            border: 2px solid orange;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div style="background-color:white;">
+        <h1>Real-Time Location Tracking</h1>
+        <div id="map"></div>
+    </div>
+
+    <script>
+        // Initialize map
+        const map = L.map('map').setView([27.700769, 85.300140], 13); // Default location
+        
+        // Add map tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Add a bus icon
+        const busIcon = L.icon({
+            iconUrl: '/static/images/download1.png',
+            iconSize: [40, 40],
+            iconAnchor: [20, 40],
+        });
+
+        // Initialize marker
+        let busMarker = L.marker([27.700769, 85.300140], { icon: busIcon }).addTo(map);
+
+        // Fetch latest location every 5 seconds
+        function fetchLocation() {
+            fetch('/api/get-latest-location/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.latitude && data.longitude) {
+                        const newLatLng = [data.latitude, data.longitude];
+                        busMarker.setLatLng(newLatLng);  // Update marker position
+                        map.setView(newLatLng, 13);     // Center map on new location
+                    } else {
+                        console.error("Location fetch failed:", data.error);
+                    }
+                });
+        }
+
+        setInterval(fetchLocation, 5000);  // Update every 5 seconds
+    </script>
+    <script>
+        // Extract route data from the backend
+        const routeData = JSON.parse('{{ owner_route.route_data|escapejs }}'); // Polyline data
+        const startingPoint = routeData[0]; // First coordinate
+        const destinationPoint = routeData[routeData.length - 1]; // Last coordinate
+
+        // Extract bus stop data
+        const busStops = [
+            {% for stop in bus_stops %}
+            { name: "{{ stop.name }}", lat: {{ stop.latitude }}, lng: {{ stop.longitude }} },
+            {% endfor %}
+        ];
+
+        // Initialize map
+        const map = L.map('map').setView(startingPoint, 13);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+        }).addTo(map);
+
+        // Add polyline for the route
+        const routePolyline = L.polyline(routeData, { color: 'blue' }).addTo(map);
+
+        // Fit map to route
+        map.fitBounds(routePolyline.getBounds());
+
+        // Add custom icons
+        const busStopIcon = L.icon({
+            iconUrl: '/static/images/busstop.png',
+            iconSize: [45, 41],
+            iconAnchor: [19, 41],
+            popupAnchor: [0, -30]
+        });
+
+        const startIcon = L.icon({
+            iconUrl: 'https://unpkg.com/leaflet@1.8.0/dist/images/marker-icon.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [0, -30]
+        });
+
+        const destinationIcon = L.icon({
+            iconUrl: 'https://unpkg.com/leaflet@1.8.0/dist/images/marker-icon.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [0, -30]
+        });
+
+        // Add starting point marker
+        L.marker(startingPoint, { icon: startIcon })
+            .addTo(map)
+            .bindPopup('<strong>Starting Point</strong>');
+
+        // Add destination point marker
+        L.marker(destinationPoint, { icon: destinationIcon })
+            .addTo(map)
+            .bindPopup('<strong>Destination Point</strong>');
+
+        // Add markers for bus stops
+        busStops.forEach(stop => {
+            L.marker([stop.lat, stop.lng], { icon: busStopIcon })
+                .addTo(map)
+                .bindPopup(`<strong>${stop.name}</strong><br>(${stop.lat}, ${stop.lng})`);
+        });
+    </script>
+</body>
+
+</html>
+
+
+{% endblock %}

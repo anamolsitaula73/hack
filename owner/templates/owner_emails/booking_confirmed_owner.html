@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmed Notification</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #ff0000;
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        p {
+            line-height: 1.6;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #666;
+        }
+        .highlight {
+            color: #ff0000;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Booking Confirmedd Notification</h2>
+        <p>Dear {{ owner.username }},</p>
+        <p>You have confirmed booking for your venue <span class="highlight">{{ venue.name }}</span>.</p>
+        <p><span class="highlight">Booking Details:</span></p>
+        <ul>
+            <li><span class="highlight">Booked by:</span> {{ booking.user.username }}</li>
+            <li><span class="highlight">User Email:</span> {{ booking.user.email }}</li>
+            <li><span class="highlight">Venue:</span> {{ venue.name }}</li>
+            <li><span class="highlight">Address:</span> {{ venue.address }}</li>
+            <li><span class="highlight">Date Booked:</span> {{ booking.date }}</li>
+            <li><span class="highlight">Time Booked:</span> {{ booking.time }}</li>
+        </ul>
+        <p>Thank you for using our service.</p>
+       
+    </div>
+</body>
+</html>

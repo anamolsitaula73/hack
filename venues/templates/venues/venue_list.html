@@ -1,0 +1,20 @@
+<!-- venues/templates/venues/venue_list.html -->
+{% extends 'accounts/base.html' %}
+
+{% block title %}Venues{% endblock %}
+
+{% block content %}
+<h2>My Venue</h2>
+
+{% if venues %}
+    <ul>
+        {% for venue in venues %}
+            <li>{{ venue.name }} - 
+                <a href="{% url 'add_pricing_package' venue.id %}">Add Pricing Package</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No venues found for your email.</p>
+{% endif %}
+{% endblock %}

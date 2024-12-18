@@ -1,0 +1,166 @@
+{% extends 'owner/base.html' %}
+
+{% block title %}About Us{% endblock %}
+{% load static %}
+
+{% block content %}
+<section class="about-us">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <h1>About Us</h1>
+                <p>Welcome to Event Planner! As a group of enthusiastic students and aspiring business professionals, we're excited to introduce our platform designed to make event management and booking easier than ever. Our goal is to streamline the event planning process and bridge the gap between venue owners and those seeking the ideal location for their events.</p>
+                <p>Driven by our passion for business and innovation, we're committed to providing top-notch service and an exceptional user experience. Whether you're a venue owner or an event organizer, we're here to support you every step of the way and help you achieve your event planning goals.</p>
+                
+                <h2>Our Story</h2>
+                <p>Event Planner was born from our ambition to create a user-friendly platform that serves both venue owners and event organizers. With a blend of our academic knowledge and a deep interest in management and technology, we aimed to address the common challenges in finding and booking the right venue. Our team’s dedication to growth and improvement drives us to continuously enhance our platform and make event planning a smooth and enjoyable experience for everyone.</p>
+                
+            </div>
+
+            <div class="col-lg-6">
+                <img src="{% static 'images/cover/aa.jpg' %}" alt="About Us Image" class="img-fluid">
+            </div>
+        </div>
+        <h2>Our Team</h2>
+        <div class="team-members">
+            <div class="team-member">
+                <img src="{% static 'images/team/anamol.jpg' %}" alt="Team Member">
+                <h3>Anamol Sitaula</h3>
+                <p class="role">Backend Developer</p>
+                <p >Anamol is the visionary behind Event Planner, bringing his academic knowledge and passion for technology to the project. As a student, he is eager to learn and grow through this experience.</p>
+            </div>
+            <div class="team-member">
+                <img src="{% static 'images/team/kiran.jpg' %}" alt="Team Member">
+                <h3>Kiran Pandey</h3>
+                <p class="role">Backend Developer</p>
+                <p >Kiran is the technical mastermind who ensures our platform runs smoothly and securely. His focus on user experience and innovation is driven by his desire to learn and apply new skills as a student.</p>
+            </div>
+            <div class="team-member">
+                <img src="{% static 'images/team/saroj.jpeg' %}" alt="Team Member">
+                <h3>Saroj Tamang</h3>
+                <p class="role">Frontend Developer</p>
+                <p >Saroj leads our frontend development efforts, creating intuitive and visually appealing interfaces. As a student, he is constantly learning and improving his design and development skills.</p>
+            </div>
+            <div class="team-member">
+                <img src="{% static 'images/team/nawaraj.jpeg' %}" alt="Team Member">
+                <h3>Nawaraj Acharya</h3>
+                <p class="role">Frontend Developer</p>
+                <p >Nawaraj helps craft responsive designs and interactive features that bring our platform to life. He is enthusiastic about learning and growing through this hands-on project experience.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --Very-Dark-Blue: #2c3e50;
+        --Dark-Gray: #34495e;
+        --Light-Gray: #ecf0f1;
+        --Primary-Color: #3498db;
+        --Secondary-Color: #2ecc71;
+        --Team-Color: #ff5722; /* Orange color for team members */
+    }
+
+    .about-us {
+        padding: 2rem 9%;
+        background: var(--Light-Gray);
+        color: var(--Very-Dark-Blue);
+        border-radius: 10px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .about-us h1, .about-us h2 {
+        color: var(--Primary-Color);
+        text-align: center;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .about-us p {
+        color: var(--Very-Dark-Blue);
+        text-align: justify;
+        margin-bottom: 1rem;
+    }
+
+    .team-members {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        justify-content: center;
+    }
+
+    .team-member {
+        text-align: center;
+        background: var(--Team-Color);
+        color: #fff;
+        border: 2px solid var(--Dark-Gray); /* Consistent border for all members */
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+        flex: 1 1 calc(50% - 2rem); /* Two items per row */
+    }
+    
+    .team-member p {
+        color: #fff;
+    }
+
+    .team-member:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .team-member img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        margin-bottom: 1rem;
+        object-fit: cover;
+    }
+
+    .team-member h3 {
+        margin-bottom: 0.5rem;
+    }
+
+    .role {
+        font-weight: bold;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    @media (max-width: 992px) {
+        .about-us {
+            padding: 2rem 5%;
+        }
+
+        .team-member {
+            flex: 1 1 calc(100% - 2rem); /* Single item per row */
+        }
+    }
+
+    @media (max-width: 576px) {
+        .about-us {
+            padding: 1rem 2%;
+        }
+
+        .team-member {
+            padding: 1rem;
+        }
+
+        .team-member img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .team-member h3 {
+            font-size: 1.2rem;
+        }
+
+        .role {
+            font-size: 1rem;
+        }
+    }
+</style>
+{% endblock %}

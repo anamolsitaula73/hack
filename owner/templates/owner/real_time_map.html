@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Owner Location</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
+</head>
+<body>
+    <h1>Real-Time Owner Location</h1>
+    <div id="map" style="height: 500px; width: 100%;"></div>
+
+    <script>
+        function initMap() {
+            const map = new google.maps.Map(document.getElementById('map'), { zoom: 14, center: { lat: 0, lng: 0 } });
+            const marker = new google.maps.Marker({ map: map });
+
+            async function fetchLocation() {
+                const response = await fetch('/api/get-latest-location/');
+                const data = await response.json();
+                const position = { lat: data.latitude, lng: data.longitude };
+
+                marker.setPosition(position);
+                map.setCenter(position);
+            }
+
+            setInterval(fetchLocation, 5000);  // Refresh location every 5 seconds
+        }
+
+        window.onload = initMap;
+    </script>
+</body>
+</html>

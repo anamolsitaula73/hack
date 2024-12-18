@@ -1,0 +1,13 @@
+{% extends 'accounts/base.html' %}
+{% block title %}View Pricing Packages{% endblock %}
+
+{% block content %}
+<h2>Pricing Packages for {{ venue.name }}</h2>
+<ul>
+    {% for package in packages %}
+        <li>{{ package.package_name }} - Nrs{{ package.price }}</li>
+    {% empty %}
+        <li>No pricing packages available</li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,50 @@
+<!-- accounts/templates/accounts/login.html -->
+{% extends 'accounts/base.html' %}
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f8f9fa;
+    }
+    .card {
+        background-color: #ffffff;
+        border-radius: 10px;
+    }
+    .btn-primary {
+        background-color: #0069d9;
+        border: none;
+        font-size: 1.2rem;
+        transition: background-color 0.3s ease;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+    .text-primary {
+        color: #0069d9;
+        transition: color 0.3s ease;
+    }
+    .text-primary:hover {
+        color: #0056b3;
+    }
+</style>
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-md-6 col-lg-4">
+            <div class="card p-4 shadow-lg border-0 rounded">
+                <div class="card-body">
+                    <h2 class="text-center mb-4">Login</h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'signup' %}" class="text-primary">Don't have an account? Sign Up</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

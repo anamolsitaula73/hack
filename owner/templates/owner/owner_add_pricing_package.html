@@ -1,0 +1,45 @@
+{% extends 'owner/base.html' %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+    }
+
+    .form-container h2 {
+        color: #007bff; /* Blue */
+        margin-bottom: 20px;
+        font-weight: 700;
+    }
+
+    .form-container .btn-primary {
+        background-color: #007bff;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    .form-container .btn-primary:hover {
+        background-color: #0056b3;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="form-container mx-auto p-4">
+        <h2 class="text-center">Add Pricing Package for<br> <u>{{ venue.name }}</u></h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg btn-block">Add Package</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

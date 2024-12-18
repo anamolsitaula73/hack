@@ -1,0 +1,18 @@
+{% extends 'owner/base.html' %}
+
+{% block title %}Edit Venue Image{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">
+Image exceeds 3 Mb     </h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_image">Select New Image:</label>
+            {{ form.image }}
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Upload</button>
+    </form>
+</div>
+{% endblock %}

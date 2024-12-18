@@ -1,0 +1,111 @@
+{% extends 'owner/base.html' %}
+
+{% block title %}Register Venue{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-color: #f0f2f5;
+        font-family: 'Arial', sans-serif;
+    }
+    .content-area {
+        background-color: #ffffff;
+        padding: 40px;
+        border-radius: 10px;
+        max-width: 600px;
+        margin: 50px auto;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+        color: #4caf50; /* Green */
+        margin-bottom: 20px;
+        font-weight: 700;
+    }
+    form {
+        background-color: #f9f9f9;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-control {
+        border-radius: 5px;
+        padding: 10px;
+        border: 1px solid #cccccc;
+        transition: border-color 0.3s;
+    }
+    .form-control:focus {
+        border-color: #4caf50;
+        box-shadow: 0 0 8px rgba(76, 175, 80, 0.1);
+    }
+    form button {
+        width: 100%;
+        background-color: #4caf50; /* Green */
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        transition: background-color 0.3s, transform 0.3s;
+    }
+    form button:hover {
+        background-color: #45a049; /* Darker Green */
+        transform: translateY(-2px);
+    }
+    .login-message {
+        background-color: #f0f0f0;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+        text-align: center;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+    }
+    .nav-link a {
+        color: #333333;
+        text-decoration: none;
+        font-weight: bold;
+        transition: color 0.3s;
+    }
+    .nav-link a:hover {
+        color: #4caf50; /* Green */
+    }
+    a {
+        text-decoration: none;
+        color: #e91e63; /* Magenta */
+        transition: color 0.3s;
+    }
+    a:hover {
+        color: #c2185b; /* Darker Magenta */
+    }
+</style>
+
+<div class="content-area">
+    <center>
+        <h2>Register Bius Detail</h2>
+        {% if user.is_authenticated %}
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Submit</button>
+            </form>
+            <br>
+            <a href="{% url 'venue_detail' %}"><h4>Already registered?</h4></a>
+            <br>
+        {% else %}
+            <div class="login-message">
+                <h1>Please login to continue</h1>
+                <ul class="nav-item">
+                    <li class="nav-link">
+                        <a href="{% url 'login' %}">Login</a>
+                    </li>
+                </ul>
+            </div>
+        {% endif %}
+    </center>
+</div>
+
+
+{% endblock %}

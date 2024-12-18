@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking Canceled</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #007bff;
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        p {
+            line-height: 1.6;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Booking Canceled</h2>
+        <p>Dear {{ user.username }},</p>
+        <p>Your booking at <strong>{{ venue.name }}</strong> has been canceled.</p>
+        <p><strong>Booking Details:</strong></p>
+        <ul>
+            <li><strong>Venue:</strong> {{ venue.name }}</li>
+            <li><strong>Address:</strong> {{ venue.address }}</li>
+            <li><strong>Date Booked:</strong> {{ booking.date }}</li>
+            <li><strong>Time Booked:</strong> {{ booking.time }}</li>
+        </ul>
+        <p>Thank you for using our service.</p>
+        <div class="footer">
+            <p>&copy; 2024 Your Company. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

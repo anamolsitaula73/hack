@@ -1,0 +1,156 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}My Events{% endblock %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+        <style>
+            .events-container {
+                border: 2px solid #4CAF50; /* Border color */
+                border-radius: 10px;
+                padding: 20px;
+                margin: 20px auto;
+                max-width: 800px;
+                background-color: #f9f9f9;
+                color: darkblue;
+            }
+
+            .events-list {
+                list-style-type: none;
+                padding: 0;
+            }
+
+            .event-item {
+                background-color: #ffffff;
+                padding: 20px;
+                margin-bottom: 20px;
+                border-radius: 5px;
+                border: 1px solid #e9e9e9;
+                transition: background-color 0.3s ease;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .event-item:hover {
+                background-color: #e9e9e9;
+            }
+
+            .event-details {
+                font-family: Arial, sans-serif;
+                flex-grow: 1;
+            }
+
+            .event-details h3 {
+                margin-top: 0;
+                margin-bottom: 10px;
+                color: #333;
+            }
+
+            .event-details p {
+                margin: 5px 0;
+                color: #666;
+            }
+
+            .create-event-link {
+                display: inline-block;
+                background-color: #4CAF50;
+                color: white;
+                padding: 10px 20px;
+                text-decoration: none;
+                border-radius: 5px;
+                transition: background-color 0.3s ease;
+                margin-top: 20px;
+            }
+
+            .create-event-link:hover {
+                background-color: green;
+                color: white;
+            }
+
+            .delete-event-form {
+                margin: 0;
+            }
+
+            .delete-event-button {
+                background-color: red; /* Vibrant orange color */
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                font-size: 16px;
+                margin-left: 10px;
+            }
+
+            .delete-event-button:hover {
+                background-color: #e64000; /* Darker shade of orange */
+            }
+
+            .recommend-event-button {
+                background-color: #4CAF50; /* Green color */
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                font-size: 16px;
+                margin-right: 10px; /* Adjust spacing between buttons */
+            }
+
+            .recommend-event-button:hover {
+                background-color: green; /* Darker shade of green */
+            }
+
+            .event-actions {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 20px;
+            }
+        </style>
+
+        <div class="events-container">
+            <h2>My Events</h2>
+            {% if events %}
+                <ul class="events-list">
+                    {% for event in events %}
+                        <li class="event-item">
+                            <div class="event-details">
+                                <h3>{{ event.event_type }}</h3>
+                                <p>
+                                    Date: {{ event.event_date }} &emsp;&emsp;
+                                    Location: {{ event.location }} &emsp;&emsp;
+                                    Budget: Nrs{{ event.event_budget }} &emsp;&emsp;
+                                    Attendees: {{ event.number_of_people }}
+                                    <br>
+                                </p>
+                            </div>
+                            <div class="event-actions">
+                                <a href="{% url 'recommend_venue' event.id %}">
+                                    <button type="button" class="recommend-event-button">Recommend Venue</button>
+                                </a>
+                                <form action="{% url 'delete_event' event.id %}" method="post" class="delete-event-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="delete-event-button">Delete</button>
+                                </form>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No events created yet. </p>
+            {% endif %}
+            <a href="{% url 'create_event' %}" class="create-event-link">Create Event</a>
+        </div>
+    {% else %}
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'css/login.css' %}">
+        <div class="login-container">
+            <h2>Please Log In</h2>
+            <p>You need to be logged in to view this content.</p>
+            <a href="{% url 'login' %}" class="login-link">Log In</a>
+        </div>
+    {% endif %}
+{% endblock %}

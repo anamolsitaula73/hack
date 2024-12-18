@@ -1,0 +1,140 @@
+<!-- my_profile.html -->
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+<div class="container profile-container">
+    <h2 class="mb-4">My Profile</h2>
+
+    <!-- Display user details -->
+    <div class="user-details mb-4">
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+    </div>
+
+    <!-- Update Name Form -->
+    <div class="card mb-3 profile-card">
+        <div class="card-header">
+            <h3 class="card-title">Update Name</h3>
+            <button class="btn btn-sm btn-primary float-end" id="edit-name-btn">Edit</button>
+        </div>
+        <div class="card-body" id="name-form-container" style="display: none;">
+            <form id="update-name-form" method="POST" action="{% url 'update_name' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="id_first_name" class="form-label">First Name:</label>
+                    <input type="text" id="id_first_name" name="first_name" value="{{ user.first_name }}" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="id_last_name" class="form-label">Last Name:</label>
+                    <input type="text" id="id_last_name" name="last_name" value="{{ user.last_name }}" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-secondary" id="cancel-name-btn">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Change Password Form -->
+    <div class="card mb-3 profile-card">
+        <div class="card-header">
+            <h3 class="card-title">Change Password</h3>
+            <button class="btn btn-sm btn-primary float-end" id="edit-password-btn">Change</button>
+        </div>
+        <div class="card-body" id="password-form-container" style="display: none;">
+            <form id="change-password-form" method="POST" action="{% url 'password_change' %}">
+                {% csrf_token %}
+                {{ password_form.as_p }}
+                {% if password_form.errors %}
+                    <div class="alert alert-danger">
+                        {% for field, error in password_form.errors.items %}
+                            <strong>{{ field|title }}</strong>: {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <button type="submit" class="btn btn-primary">Change Password</button>
+                <button type="button" class="btn btn-secondary" id="cancel-password-btn">Cancel</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .container.profile-container {
+        border: 2px solid orange; /* Orange border */
+        border-radius: 10px; /* Rounded corners */
+        padding: 20px; /* Padding inside the container */
+        background-color: #f9f9f9; /* Light background color */
+        margin-top: 20px; /* Margin at the top */
+    }
+
+    .profile-card {
+        border: 1px solid orange; /* Orange border for cards */
+        border-radius: 10px; /* Rounded corners for cards */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow */
+    }
+
+    .profile-card .card-header {
+        background-color: #f5f5f5; /* Light grey background for header */
+        border-bottom: 1px solid #ddd; /* Light border at the bottom */
+        color: #333; /* Dark text color */
+    }
+
+    .profile-card .card-body {
+        background-color: #fff; /* White background for card body */
+    }
+
+    .btn-primary {
+        background-color: #007bff; /* Primary button color */
+        border-color: #007bff; /* Border color */
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3; /* Darker primary color on hover */
+        border-color: #004494; /* Darker border color */
+    }
+
+    .btn-secondary {
+        background-color: #6c757d; /* Secondary button color */
+        border-color: #6c757d; /* Border color */
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268; /* Darker secondary color on hover */
+        border-color: #545b62; /* Darker border color */
+    }
+
+    .user-details p {
+        font-size: 1.1em;
+        color: #333;
+    }
+
+    .alert-danger {
+        border-radius: 5px;
+        background-color: #f8d7da; /* Light red background */
+        color: #721c24; /* Dark red text */
+    }
+</style>
+
+<script>
+    // Toggle visibility of name form when edit button is clicked
+    document.getElementById('edit-name-btn').addEventListener('click', function() {
+        document.getElementById('name-form-container').style.display = 'block';
+    });
+
+    // Cancel name edit
+    document.getElementById('cancel-name-btn').addEventListener('click', function() {
+        document.getElementById('name-form-container').style.display = 'none';
+    });
+
+    // Toggle visibility of password form when edit button is clicked
+    document.getElementById('edit-password-btn').addEventListener('click', function() {
+        document.getElementById('password-form-container').style.display = 'block';
+    });
+
+    // Cancel password change
+    document.getElementById('cancel-password-btn').addEventListener('click', function() {
+        document.getElementById('password-form-container').style.display = 'none';
+    });
+</script>
+
+{% endblock %}

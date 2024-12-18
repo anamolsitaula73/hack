@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Real-Time Location</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        #map {
+            height: 500px;
+            width: 100%;
+            margin-top: 20px;
+            border: 2px solid orange;
+            border-radius: 10px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div style="background-color:white;">
+        <h1>Real-Time Location Tracking</h1>
+        <div id="map"></div>
+
+        <h2>Route Details</h2>
+        <h3>Route: {{ owner_route.route_name }}</h3>
+
+        <h2>Bus Stops</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Stop Name</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stop in bus_stops %}
+                <tr>
+                    <td>{{ stop.name }}</td>
+                    <td>{{ stop.latitude }}</td>
+                    <td>{{ stop.longitude }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Initialize map
+        const map = L.map('map').setView([27.700769, 85.300140], 13); // Default location
+
+        // Add map tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Add a bus icon
+        const busIcon = L.icon({
+            iconUrl: '/static/images/download1.png',
+            iconSize: [40, 40],
+            iconAnchor: [20, 40],
+        });
+
+        // Initialize marker
+        let busMarker = L.marker([27.700769, 85.300140], { icon: busIcon }).addTo(map);
+
+        // Fetch latest location every 5 seconds
+        function fetchLocation() {
+            fetch('/api/get-latest-location/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.latitude && data.longitude) {
+                        const newLatLng = [data.latitude, data.longitude];
+                        busMarker.setLatLng(newLatLng);  // Update marker position
+                        map.setView(newLatLng, 13);     // Center map on new location
+                    } else {
+                        console.error("Location fetch failed:", data.error);
+                    }
+                });
+        }
+
+        setInterval(fetchLocation, 5000);  // Update every 5 seconds
+
+        // Extract route data from the backend
+        const routeData = JSON.parse('{{ owner_route.route_data|escapejs }}'); // Polyline data
+        const startingPoint = routeData[0]; // First coordinate
+        const destinationPoint = routeData[routeData.length - 1]; // Last coordinate
+
+        // Extract bus stop data
+        const busStops = [
+            {% for stop in bus_stops %}
+            { name: "{{ stop.name }}", lat: {{ stop.latitude }}, lng: {{ stop.longitude }} },
+            {% endfor %}
+        ];
+
+        // Add polyline for the route
+        const routePolyline = L.polyline(routeData, { color: 'blue' }).addTo(map);
+
+        // Fit map to route
+        map.fitBounds(routePolyline.getBounds());
+
+        // Add custom icons
+        const busStopIcon = L.icon({
+            iconUrl: '/static/images/busstop.png',
+            iconSize: [45, 41],
+            iconAnchor: [19, 41],
+            popupAnchor: [0, -30]
+        });
+
+        const startIcon = L.icon({
+            iconUrl: 'https://unpkg.com/leaflet@1.8.0/dist/images/marker-icon.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [0, -30]
+        });
+
+        const destinationIcon = L.icon({
+            iconUrl: 'https://unpkg.com/leaflet@1.8.0/dist/images/marker-icon.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [0, -30]
+        });
+
+        // Add starting point marker
+        L.marker(startingPoint, { icon: startIcon })
+            .addTo(map)
+            .bindPopup('<strong>Starting Point</strong>');
+
+        // Add destination point marker
+        L.marker(destinationPoint, { icon: destinationIcon })
+            .addTo(map)
+            .bindPopup('<strong>Destination Point</strong>');
+
+        // Add markers for bus stops
+        busStops.forEach(stop => {
+            L.marker([stop.lat, stop.lng], { icon: busStopIcon })
+                .addTo(map)
+                .bindPopup(`<strong>${stop.name}</strong><br>(${stop.lat}, ${stop.lng})`);
+        });
+    </script>
+</body>
+</html>

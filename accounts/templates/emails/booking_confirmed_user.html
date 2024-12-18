@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Booking Confirmed</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            background-color: #28a745;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            padding: 20px;
+        }
+        .content p {
+            margin: 0 0 10px;
+            font-size: 16px;
+        }
+        .content ul {
+            padding: 0;
+            list-style: none;
+        }
+        .content ul li {
+            background: #28a745;
+            color: #fff;
+            padding: 10px;
+            margin: 0 0 10px;
+            border-radius: 5px;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f4f9;
+            color: #666;
+        }
+        .footer p {
+            margin: 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>Booking Confirmed</h1>
+        </div>
+        <div class="content">
+            <p>Dear {{ user.username }},</p>
+
+            <p>We are pleased to inform you that your booking at <strong>{{ venue.name }}</strong> has been confirmed.</p>
+
+            <p>Details of your booking:</p>
+            <ul>
+                <li><strong>Venue:</strong> {{ venue.name }}</li>
+                <li><strong>Address:</strong> {{ venue.address }}</li>
+                <li><strong>Date:</strong> {{ booking.date }}</li>
+                <li><strong>Time:</strong> {{ booking.time }}</li>
+                <li><strong>Number of Guests:</strong> {{ booking.number_of_guests }}</li>
+            </ul>
+            
+            <p>Thank you for choosing our service. We look forward to hosting you.</p>
+        </div>
+        <div class="footer">
+            <p>&copy; 2024 Event Planner. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

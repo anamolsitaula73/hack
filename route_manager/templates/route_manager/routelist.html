@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route List</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        #map {
+            height: 500px;
+            width: 100%;
+            margin-bottom: 20px; /* Map above the table */
+        }
+        .highlight {
+            background-color: #ffeb3b;
+        }
+        #searchBox {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Created Routes</h1>
+
+<!-- Search Box -->
+<input type="text" id="searchBox" placeholder="Search for routes..." onkeyup="filterRoutes()">
+
+<!-- Map Container -->
+<div id="map"></div>
+
+<!-- Route List Table -->
+<table id="routeTable">
+    <thead>
+        <tr>
+            <th>Route Name</th>
+            <th>Starting Point</th>
+            <th>Destination</th>
+            <th>Bus Stops</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for route in routes %}
+        <tr id="route-{{ route.id }}" onclick="showBusStops({{ route.id }})">
+            <td>{{ route.name }}</td>
+            <td>{{ route.starting_point }}</td>
+            <td>{{ route.destination }}</td>
+            <td>
+                {% for bus_stop in route.bus_stops.all %}
+                    <p>Bus Stop at ({{ bus_stop.lat }}, {{ bus_stop.lon }})</p>
+                {% endfor %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No routes created yet.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+<script>
+    // Initialize the map (set a default center)
+    var map = L.map('map').setView([27.6667, 84.4333], 10);  // Default center (Bharatpur)
+
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    // Arrays to store polyline and bus stop markers for each route
+    var routePolylines = [];
+    var busStopMarkers = [];
+    var routeBusStopLines = [];
+
+    // Loop through all routes and display polyline for each route (show routes by default)
+    {% for route in routes %}
+        {% if route.start_lat and route.start_lon and route.end_lat and route.end_lon %}
+        var routePolyline = L.polyline([
+            [{{ route.start_lat }}, {{ route.start_lon }}],
+            [{{ route.end_lat }}, {{ route.end_lon }}]
+        ], { color: 'green' }).addTo(map);
+
+        // Calculate the distance of the route
+        var totalDistance = 0;
+        var routeBusStops = [];
+        {% for bus_stop in route.bus_stops.all %}
+            {% if bus_stop.lat and bus_stop.lon %}
+            routeBusStops.push([{{ bus_stop.lat }}, {{ bus_stop.lon }}]);
+
+            // Calculate distance from previous bus stop (if exists)
+            if (routeBusStops.length > 1) {
+                var startPoint = L.latLng(routeBusStops[routeBusStops.length - 2]);
+                var endPoint = L.latLng([{{ bus_stop.lat }}, {{ bus_stop.lon }}]);
+                totalDistance += startPoint.distanceTo(endPoint) / 1000;  // Distance in kilometers
+            }
+            {% endif %}
+        {% endfor %}
+
+        // Create popup content showing the route details
+        var popupContent = "<strong>Route:</strong> {{ route.name }}<br>"
+            + "<strong>Starting Point:</strong> {{ route.starting_point }}<br>"
+            + "<strong>Destination:</strong> {{ route.destination }}<br>"
+            + "<strong>Distance:</strong> " + totalDistance.toFixed(2) + " km<br>"
+            + "<strong>Number of Bus Stops:</strong> {{ route.bus_stops.all.count }}";
+
+        routePolyline.bindPopup(popupContent);  // Bind the popup to the route polyline
+
+        // Store route polyline for later access
+        routePolylines.push({ id: {{ route.id }}, polyline: routePolyline });
+        {% endif %}
+    {% endfor %}
+
+    // Loop through all bus stops and store markers for each route (initially hidden)
+    {% for route in routes %}
+        var routeBusStops = [];
+        {% for bus_stop in route.bus_stops.all %}
+            {% if bus_stop.lat and bus_stop.lon %}
+            var busStopMarker = L.marker([{{ bus_stop.lat }}, {{ bus_stop.lon }}])
+            .bindPopup("Bus Stop at ({{ bus_stop.lat }}, {{ bus_stop.lon }})");
+
+            // Store bus stop markers for later access
+            busStopMarkers.push({ routeId: {{ route.id }}, marker: busStopMarker });
+
+            // Store bus stop positions for line creation
+            routeBusStops.push([{{ bus_stop.lat }}, {{ bus_stop.lon }}]);
+            {% endif %}
+        {% endfor %}
+
+        // Draw lines connecting bus stops for this route (stored in routeBusStops)
+        if (routeBusStops.length > 1) {
+            var busStopLine = L.polyline(routeBusStops, { color: 'blue' }).addTo(map);
+            routeBusStopLines.push({ routeId: {{ route.id }}, line: busStopLine });
+        }
+    {% endfor %}
+
+    // Variable to keep track of the currently active route
+    var activeRouteId = null;
+
+    // Function to show or hide bus stops and route line when a route is clicked
+    function showBusStops(routeId) {
+        // Check if the clicked route is already active
+        if (activeRouteId === routeId) {
+            // If already active, hide the bus stops and lines
+            busStopMarkers.forEach(function(item) {
+                if (item.routeId === routeId) {
+                    map.removeLayer(item.marker);  // Hide bus stops for this route
+                }
+            });
+
+            routeBusStopLines.forEach(function(item) {
+                if (item.routeId === routeId) {
+                    map.removeLayer(item.line);  // Hide bus stop lines for this route
+                }
+            });
+
+            // Reset the active route state
+            activeRouteId = null;
+
+            // Remove the highlight from the table row
+            document.getElementById('route-' + routeId).classList.remove('highlight');
+        } else {
+            // Otherwise, show the bus stops and lines for the clicked route
+            busStopMarkers.forEach(function(item) {
+                if (item.routeId === routeId) {
+                    item.marker.addTo(map);  // Show bus stops for the clicked route
+                }
+            });
+
+            routeBusStopLines.forEach(function(item) {
+                if (item.routeId === routeId) {
+                    item.line.addTo(map);  // Show lines connecting bus stops for clicked route
+                }
+            });
+
+            // Set the active route state
+            activeRouteId = routeId;
+
+            // Optionally, adjust the map view to focus on the selected route
+            var selectedRoute = routePolylines.find(function(item) {
+                return item.id === routeId;
+            });
+            if (selectedRoute) {
+                map.fitBounds(selectedRoute.polyline.getBounds());
+            }
+
+            // Highlight the clicked route in the table
+            document.querySelectorAll('tr').forEach(function(row) {
+                row.classList.remove('highlight');  // Remove previous highlights
+            });
+            document.getElementById('route-' + routeId).classList.add('highlight');
+        }
+    }
+
+    // Function to filter routes based on search input
+    function filterRoutes() {
+        var searchQuery = document.getElementById('searchBox').value.toLowerCase();
+        var rows = document.querySelectorAll('#routeTable tbody tr');
+
+        rows.forEach(function(row) {
+            var routeName = row.cells[0].textContent.toLowerCase();
+            if (routeName.indexOf(searchQuery) === -1) {
+                row.style.display = 'none';  // Hide rows that do not match the search query
+            } else {
+                row.style.display = '';  // Show rows that match the search query
+            }
+        });
+    }
+
+    // Hide all bus stop markers and lines by default (only show routes initially)
+    busStopMarkers.forEach(function(item) {
+        map.removeLayer(item.marker);
+    });
+    routeBusStopLines.forEach(function(item) {
+        map.removeLayer(item.line);
+    });
+</script>
+
+</body>
+</html>

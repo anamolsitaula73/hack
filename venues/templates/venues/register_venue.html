@@ -1,0 +1,56 @@
+<!-- venues/templates/venues/register_venue.html -->
+{% extends 'accounts/base.html' %}
+
+{% block title %}Register Venue{% endblock %}
+
+{% block content %}
+<style>
+    .content-area {
+        background-color: #F2F2F2;
+        padding: 20px;
+        border-radius: 10px;
+    }
+    form {
+        background-color: #E6E6E6;
+        padding: 20px;
+        border-radius: 10px;
+    }
+    .login-message {
+        background-color: #CCCCCC;
+        padding: 10px;
+        border-radius: 10px;
+    }
+    .nav-link {
+        color: #333333;
+    }
+</style>
+
+<div class="content-area">
+    <center>
+    <h2>Register Venue</h2>
+
+    {% if user.is_authenticated %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {% if email_already_registered %}
+                <p class="login-message">Email is already registered.</p>
+            {% endif %}
+            <button type="submit">Register</button>
+        </form>
+        <br>
+        <a href="{% url 'venue_list' %}"><h4>Already registered?</h4></a>
+        <br>
+    {% else %}
+        <div class="login-message">
+            <h1>Please login to continue</h1>
+            <ul class="nav-item">
+                <li class="nav-link">
+                    <a href="{% url 'login' %}">Login</a>
+                </li>
+            </ul>
+        </div>
+    {% endif %}
+    </center>
+</div>
+{% endblock %}

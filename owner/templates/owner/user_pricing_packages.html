@@ -1,0 +1,119 @@
+<!-- venues/templates/venues/register_venue.html -->
+{% extends 'accounts/base.html' %}
+
+{% block title %}Register Venue{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+    <h1 class="display-4">{{ venue.name }} - Pricing Packages</h1>
+</div>
+
+<div class="container" id="package-list">
+    {% if packages %}
+        {% for package in packages %}
+            <div class="package">
+                <h3>{{ package.package_name }}</h3>
+                <div class="package-details">
+                    <p>Price: NRS {{ package.price }}</p>
+                    <p><i class="fas fa-info-circle"></i> {{ package.details }}</p>
+                    <p><i class="fas fa-envelope"></i> Contact: {{ package.contact_email }}</p>
+                </div>
+                {% if user.is_authenticated and user == venue.user %}
+                    <div class="button-container">
+                        <form action="{% url 'edit_package' venue.id package.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="edit-button">Edit</button>
+                        </form>
+                        <form action="{% url 'delete_package' venue.id package.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="delete-button">Delete</button>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+        {% empty %}
+            <p>No pricing packages available for {{ venue.name }}.</p>
+        {% endfor %}
+    {% else %}
+        <p>No pricing packages available for {{ venue.name }}.</p>
+    {% endif %}
+</div>
+
+<style>
+    .container {
+        border: 2px solid orange; /* Orange border */
+        border-radius: 10px; /* Rounded corners */
+        padding: 20px; /* Padding inside the container */
+        margin-top: 20px; /* Margin at the top */
+        background-color: #f9f9f9; /* Light background color */
+    }
+
+    .package {
+        background-color: #e0f7fa;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 10px;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    }
+
+    .package:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        background-color: #ffffff;
+    }
+
+    .package h3 {
+        margin: 10px 0;
+        color: #333;
+        font-size: 1.5em;
+    }
+
+    .package-details {
+        text-align: left;
+    }
+
+    .package-details p {
+        margin: 5px 0;
+        color: #666;
+        font-size: 1em;
+        line-height: 1.5;
+    }
+
+    .button-container {
+        display: flex;
+        gap: 10px;
+    }
+
+    .button-container button {
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        margin: 10px 0;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .button-container button:hover {
+        background-color: #0056b3;
+    }
+
+    .edit-button {
+        background-color: #28a745;
+    }
+
+    .edit-button:hover {
+        background-color: #218838;
+    }
+
+    .delete-button {
+        background-color: #dc3545;
+    }
+
+    .delete-button:hover {
+        background-color: #c82333;
+    }
+</style>
+
+{% endblock %}
