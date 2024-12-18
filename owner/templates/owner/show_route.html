@@ -87,6 +87,9 @@
         // Initialize marker
         let busMarker = L.marker([initialLat, initialLng], { icon: busIcon }).addTo(map);
 
+        // Add initial popup to the bus marker
+        busMarker.bindPopup("<strong>Bus Location:</strong><br>Latitude: " + initialLat + "<br>Longitude: " + initialLng);
+
         // Function to fetch the latest location
         function fetchLocation() {
             $.ajax({
@@ -96,7 +99,12 @@
                     if (data.latitude && data.longitude) {
                         const newLatLng = [data.latitude, data.longitude];
                         busMarker.setLatLng(newLatLng);  // Update marker position
-                        map.setView(newLatLng, map.getZoom()); // Keep the zoom level intact
+
+                        // Update popup with the latest location
+                        busMarker.setPopupContent("<strong>Owner Location:</strong><br>Latitude: " + data.latitude + "<br>Longitude: " + data.longitude);
+
+                        // Keep the zoom level intact and center the map on the new location
+                        map.setView(newLatLng, map.getZoom());
                     } else {
                         console.error("Location fetch failed:", data.error);
                     }
@@ -107,8 +115,8 @@
             });
         }
 
-        // Fetch location every 2 seconds
-        setInterval(fetchLocation, 2000);  // Update every 2 seconds
+        // Fetch location every 1 second (1000 ms)
+        setInterval(fetchLocation, 1000);  // Update every 1 second
 
         // Extract route data from the backend
         const routeData = JSON.parse('{{ owner_route.route_data|escapejs }}'); // Polyline data

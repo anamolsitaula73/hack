@@ -6,7 +6,7 @@ from django.contrib import admin
 from .models import Venue, PricingPackage, Booking
 
 class VenueOwnerAdmin(admin.ModelAdmin):
-    list_display = ['user', 'email', 'bus_registration_number','route', 'verified','latitude','longitude','timestamp']
+    list_display = ['user', 'email','latitude','longitude','timestamp','bus_registration_number','route', 'verified']
     list_filter = ['verified']
     actions = ['verify_owners']
 
