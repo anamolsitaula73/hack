@@ -119,6 +119,21 @@
             popupAnchor: [0, -32] // Position of the popup relative to the icon
         });
 
+        const busStopIcon = L.icon({
+            iconUrl: '/static/images/busstop.png', // Path to your bus stop icon
+            iconSize: [32, 32],  // Adjust the size of the icon
+            iconAnchor: [16, 32], // Anchor the icon at the bottom center
+            popupAnchor: [0, -32] // Position of the popup relative to the icon
+        });
+        
+        const ownerIcon = L.icon({
+            iconUrl: '/static/images/download1.png', // Path to your venue owner icon
+            iconSize: [32, 32],  // Adjust the size of the icon
+            iconAnchor: [16, 32], // Anchor the icon at the bottom center
+            popupAnchor: [0, -32] // Position of the popup relative to the icon
+        });
+        
+
         // Use geolocation to center the map on the user's current location
         navigator.geolocation.getCurrentPosition(function(position) {
             const userLat = position.coords.latitude;
@@ -176,88 +191,97 @@
             {% endfor %}
         ];
         // Function to fetch venue owner location data
-        function fetchOwnerLocation(route="bhojad") {
-            const routeName = route;  // Replace with the actual route name or parameter
+        let ownerLocationInterval = null; // Store the interval instance globally
+
+        function fetchOwnerLocation(routeName) {
             fetch(`/api/get_venue_owner_location/?route=${routeName}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.ownerLocation) {
                         const { latitude, longitude, username } = data.ownerLocation;
-
-                        // Log the data to the console
+        
                         console.log('Owner Location:', data.ownerLocation);
-
+        
                         // Update the table with the owner's location
-                        const tableBody = document.querySelector('#owner-details-table');
+                        const tableBody = document.querySelector('#owner-details-table tbody');
                         const row = `<tr>
                                         <td>${username}</td>
                                         <td>${latitude}</td>
                                         <td>${longitude}</td>
-                                      </tr>`;
-                        tableBody.innerHTML = row;  // Clear and insert new data (or append if needed)
-
+                                     </tr>`;
+                        tableBody.innerHTML = row; // Clear and insert new data
+        
                         // Add the owner's location marker to the map
                         const ownerLocation = L.latLng(latitude, longitude);
-
+        
                         // Clear previous markers if needed
                         if (window.ownerMarker) {
                             map.removeLayer(window.ownerMarker);
                         }
-
+        
                         // Add the marker for the owner's location
-                        window.ownerMarker = L.marker(ownerLocation).addTo(map)
-                            .bindPopup(`${username}'s Location`)
-                            .openPopup();
-
-                        // Center the map on the owner's location and zoom in
+                        window.ownerMarker = L.marker(ownerLocation, { icon: ownerIcon }).addTo(map)
+                        .bindPopup(`
+                        <strong>Latitude:</strong> ${latitude}<br>
+                        <strong>Longitude:</strong> ${longitude}<br>
+                        <strong>Bus Number:</strong> ${data.ownerLocation.bus_num || 'N/A'}<br>
+                    `);
+        
+                        // Center the map on the owner's location
                     } else {
                         console.error('No owner location found');
                     }
                 })
                 .catch(error => console.error('Error fetching owner location:', error));
         }
-
-        // Fetch data every 2 seconds
-        setInterval(fetchOwnerLocation(), 2000);
-
+        
         function showRouteDetails(routeName, routeCoordinates, startingPoint, destination) {
+            // Clear any previous intervals
+            if (ownerLocationInterval) {
+                clearInterval(ownerLocationInterval);
+                ownerLocationInterval = null;
+            }
+        
+            // Fetch owner location every 2 seconds for the selected route
+            ownerLocationInterval = setInterval(() => fetchOwnerLocation(routeName), 2000);
+        
             // Clear previous route and markers
             if (routeLine) {
                 map.removeLayer(routeLine);
             }
             markers.forEach(marker => map.removeLayer(marker));
             markers = [];
-
+        
             // Draw the route
             const parsedCoordinates = typeof routeCoordinates === 'string' ? JSON.parse(routeCoordinates) : routeCoordinates;
             routeLine = L.polyline(parsedCoordinates.map(coord => [coord.lat, coord.lng]), {
                 color: 'blue',
                 weight: 5
             }).addTo(map);
-
+        
             // Add starting and destination markers
             const startingLatLng = L.latLng(parsedCoordinates[0].lat, parsedCoordinates[0].lng);
             const destinationLatLng = L.latLng(parsedCoordinates[parsedCoordinates.length - 1].lat, parsedCoordinates[parsedCoordinates.length - 1].lng);
-
+        
             const blueIcon = L.icon({
                 iconUrl: 'https://unpkg.com/leaflet@1.8.0/dist/images/marker-icon.png',
                 iconSize: [25, 41],
                 iconAnchor: [12, 41]
             });
-
+        
             const startMarker = L.marker(startingLatLng, { icon: blueIcon }).addTo(map).bindPopup('Starting Point: ' + startingPoint).openPopup();
             const endMarker = L.marker(destinationLatLng, { icon: blueIcon }).addTo(map).bindPopup('Destination: ' + destination);
-
+        
             markers.push(startMarker, endMarker);
             map.fitBounds(routeLine.getBounds());
-
+        
             // Display bus stops related to the route
             displayBusStops(routeName);
-
+        
             // Display venue owner details related to the route
             displayVenueOwners(routeName);
         }
-
+        
         function displayBusStops(routeName) {
             // Clear previous bus stop markers
             busStopMarkers.forEach(marker => map.removeLayer(marker));
@@ -270,7 +294,7 @@
             busStops.filter(busStop => busStop.route === routeName).forEach(busStop => {
                 // Add bus stop marker
                 const busStopLatLng = L.latLng(busStop.latitude, busStop.longitude);
-                const busStopMarker = L.marker(busStopLatLng).addTo(map).bindPopup(busStop.name);
+                const busStopMarker = L.marker(busStopLatLng, { icon: busStopIcon }).addTo(map).bindPopup(busStop.name);
                 busStopMarkers.push(busStopMarker);
 
                 // Add bus stop to table

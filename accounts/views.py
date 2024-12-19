@@ -412,6 +412,7 @@ def get_venue_owner_location(request):
         # Return the owner's location details as a response
         return Response({
             'ownerLocation': {
+                'bus_num':owner.bus_registration_number,
                 'latitude': owner.latitude,
                 'longitude': owner.longitude,
                 'username': owner.user.username  # Assuming the User model has a username field
