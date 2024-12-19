@@ -1,235 +1,910 @@
-{% extends 'accounts/base.html' %}
-
-{% block title %}Home{% endblock %}
-
-{% load static %}
-
-{% block content %}
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sarathi</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swiper@11/swiper-bundle.min.css"
+    />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Planner</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://unpkg.com/swiper@11/swiper-bundle.min.js"></script>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
-            padding: 0;
+      .transition-all {
+        transition: all 0.3s ease-in-out;
+      }
+      @media (max-width: 768px) {
+        .navbar {
+          flex-direction: column;
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #ffffff; /* White background for the container */
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .jumbotron {
-            background: linear-gradient(to right, #007bff, #00c6ff);
-            color: white;
-            padding: 50px;
-            text-align: center;
-            margin-bottom: 30px;
-            border-radius: 10px;
-        }
-
-        .welcome-container {
-            background-color:  #ff5722; /* Vibrant orange background */
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            color: #fff; /* White text for contrast */
-            text-align: center;
-            font-size: 1.2em;
-            overflow: hidden; /* Hide overflow */
-            margin-bottom: 30px; /* Space below the welcome section */
-        }
-
-        .welcome-text {
-            display: inline-block;
-            white-space: nowrap; /* Prevent wrapping */
-            animation: slide-in 10s infinite linear; /* Apply animation */
-        }
-
-        @keyframes slide-in {
-            0% {
-                transform: translateX(100%);
-            }
-            100% {
-                transform: translateX(-60%);
-            }
-        }
-
-        .image-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 300px); /* 3 columns of fixed width */
-            grid-template-rows: repeat(2, 300px); /* 2 rows of fixed height */
-            gap: 20px;
-            width: fit-content;
-            margin: 0 auto;
-            margin-bottom: 30px;
-            overflow: hidden; /* Ensure no overflow if more images */
-        }
-
-        .image-grid img {
-            width: 300px;
-            height: 300px;
-            object-fit: cover;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .image-grid img:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .venue-list {
-            background-color: #ff5722; /* Vibrant orange background */
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            color: #fff; /* White text for contrast */
-        }
-
-        .venue {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            margin: 20px 0;
-            background-color: #ffffff; /* White background for individual venue cards */
-            border-radius: 10px;
-            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .venue:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .venue img {
-            max-width: 100%;
-            max-height: 400px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 15px;
-        }
-
-        .venue h3 {
-            margin: 10px 0;
-            color: #333;
-            font-size: 1.5em;
-            text-align: center;
-        }
-
-        .venue p {
-            margin: 5px 0;
-            color: #666;
-            font-size: 1em;
-            line-height: 1.5;
-            text-align: center;
-        }
-
-        .venue-details {
-            width: 100%;
-            text-align: left;
-            margin-bottom: 10px;
-        }
-
-        .venue-details p {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 5px 0;
-        }
-
-        .venue-details p i {
-            margin-right: 10px;
-            color: #007bff;
-        }
-
-        .button-container {
-            display: flex;
-            gap: 10px;
-        }
-
-        .button-container button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            margin: 10px 0;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-
-        .button-container button:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
-        }
+      }
     </style>
-</head>
+  </head>
+  <body style="font-family: sans-serif; background-color: black; color: white; margin: 0;">
+    <!-- Navbar -->
+ 
+    <nav
+    class="navbar"
+    style="
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(90deg, #ff7a18, #ff5403, #ea580c);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      font-family: Arial, sans-serif;
+    "
+  >
+    <!-- Logo -->
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <!-- Logo Wrapper -->
+      <div
+        style="
+          height: 100px;
+          width: 100px;
+          background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, rgba(244, 154, 98, 0) 70%);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          /* box-shadow: 0 0 20px 8px rgba(255, 255, 255, 0.3); */
+        "
+      >
+      <a href="{%url 'home'%}">
+        <img
+          src="/static/images/sarathi.png"
+          alt="SARATHI Logo"
+          style="
+            height: 85px;
+            width: 85px;
+            object-fit: cover;
+            border-radius: 50%;
+          "
+        /></a>
+      </div>
+  
+      <!-- Title -->
+      <a href="{%url 'home'%}" style="text-decoration:none;">
+        <span
+          style="
+            font-size: 2.25rem;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            background: linear-gradient(90deg, #ffffff, #ffd700, #fff5cc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+          "
+        >
+          SARATHI-<i style="font-size:24px;">Urban Mobility Hub</i>
+        </span>
+      </a>
+    </div>
+  
+    <!-- Navigation Menu -->
+    <ul
+      style="
+        display: flex;
+        gap: 2rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        align-items: center;
+      "
+    >
+      <li>
+        <a
+          href="#home"
+          style="
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s ease-in-out, transform 0.3s;
+          "
+          onmouseover="this.style.color='#ffd700'; this.style.transform='scale(1.1)';"
+          onmouseout="this.style.color='white'; this.style.transform='scale(1)';"
+        >
+          Home
+        </a>
+      </li>
+      <li>
+        <a
+          href="{% url 'view-routes' %}"
+          style="
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s ease-in-out, transform 0.3s;
+          "
+          onmouseover="this.style.color='#ffd700'; this.style.transform='scale(1.1)';"
+          onmouseout="this.style.color='white'; this.style.transform='scale(1)';"
+        >
+          Routes
+        </a>
+      </li>
+      <li>
+        <a
+          href="#services"
+          style="
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s ease-in-out, transform 0.3s;
+          "
+          onmouseover="this.style.color='#ffd700'; this.style.transform='scale(1.1)';"
+          onmouseout="this.style.color='white'; this.style.transform='scale(1)';"
+        >
+          Services
+        </a>
+      </li>
+      <li>
+        <a
+          href="#testimonial"
+          style="
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s ease-in-out, transform 0.3s;
+          "
+          onmouseover="this.style.color='#ffd700'; this.style.transform='scale(1.1)';"
+          onmouseout="this.style.color='white'; this.style.transform='scale(1)';"
+        >
+          Testimonial
+        </a>
+      </li>
+      <li>
+        <a
+          href="#contact"
+          style="
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s ease-in-out, transform 0.3s;
+          "
+          onmouseover="this.style.color='#ffd700'; this.style.transform='scale(1.1)';"
+          onmouseout="this.style.color='white'; this.style.transform='scale(1)';"
+        >
+          Contact
+        </a>
+      </li>
+    </ul>
+  
 
-<body>
+  </nav>
+  <style>
+    #myBtn {
+      display: none; 
+      position: fixed;
+      bottom: 40px;
+      right: 15px;
+      z-index: 9999;
+      font-size: 20px;
+      border: none;
+      outline: none;
+      background-color: #164193;
+      color: white;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 10px;
+      transition: transform 1s ease, opacity 1s ease;
+      font-family: "Arial Unicode MS", "Segoe UI Symbol", sans-serif;
+    }
+    #myBtn:hover{
+      background-color: #164193;
+    
+    }
+     </style>
+    <button onclick="topFunction()" id="myBtn" title="Go to top"><img src="static/images/up1.png" style="width: 25px; height: 25px;">
+    </button>
+    <script>
+    
+    // Get the button
+    let mybutton = document.getElementById("myBtn");
+    
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function() {
+     scrollFunction();
+    };
+    
+    function scrollFunction() {
+     if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+         mybutton.style.display = "block";
+         
+     } else {
+         mybutton.style.display = "none";
+     }
+    }
+    
+    // When the user clicks on the button, scroll to the top of the document with smooth behavior
+    function topFunction() {
+     window.scrollTo({
+         top: 0,
+         behavior: 'smooth' // This adds the smooth scrolling effect
+     });
+    }
+    </script>
 
-    <div class="container">
-        <!-- Welcome Text Section -->
-        <section class="welcome-container">
-            <p class="welcome-text">Welcome to our Event Planner! We are here to help you find the perfect venue for your special occasion. Explore our selection and book your venue today!</p>
+
+    <!-- 1st Landing Page: Home Section -->
+    <section
+    id="home"
+    style="
+      height: 100vh;
+      background-image: url('https://rpcdn.ratopati.com/media/albums/Public_transportation_KuGE4uKikW.jpg');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      font-family: Arial, sans-serif;
+    "
+    >
+    <!-- Dark Gradient Overlay -->
+    <div
+      style="
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(234, 88, 12, 0.9));
+        color: white;
+      "
+    ></div>
+    
+    <!-- Content -->
+    <div
+      style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        text-align: center;
+        color: white;
+        position: relative;
+        z-index: 10;
+        padding: 0 2rem;
+      "
+    >
+      <!-- Creative Heading -->
+      <h1
+        style="
+          font-size: 4rem;
+          font-weight: bold;
+          margin-bottom: 1rem;
+          text-transform: uppercase;
+          background: -webkit-linear-gradient(45deg, #ea580c, #facc15);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: fadeInDown 1.2s ease-in-out;
+        "
+      >
+        Seamless Public Transport Solutions
+      </h1>
+    
+      <!-- Subheading -->
+      <p
+        style="
+          font-size: 1.25rem;
+          max-width: 700px;
+          margin-bottom: 2rem;
+          line-height: 1.6;
+          animation: fadeInUp 1.2s ease-in-out;
+        "
+      >
+        Bringing reliable, efficient, and affordable transportation to your city. Make every journey smooth, safe, and on time.
+      </p>
+    
+      <!-- Call-to-Action Button -->
+      <a
+        href="#routes"
+        style="
+          display: inline-block;
+          background: linear-gradient(to right, #ea580c, #facc15);
+          color: black;
+          font-weight: bold;
+          padding: 0.75rem 2rem;
+          font-size: 1.2rem;
+          border-radius: 0.75rem;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+          text-decoration: none;
+          transition: all 0.3s ease-in-out;
+        "
+        onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(0, 0, 0, 0.3)';"
+        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 10px rgba(0, 0, 0, 0.2)';"
+      >
+        Explore Routes
+      </a>
+    </div>
+    </section>
+    
+    <!-- Keyframe Animations -->
+    <style>
+    @keyframes fadeInDown {
+      0% {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    </style>
+    
+    
+    
+    
+        <!-- 3rd Landing Page -->
+        <section
+          id="lets-go"
+          style="
+            height: 100vh;
+            background-image: url('https://images.pexels.com/photos/15166870/pexels-photo-15166870/free-photo-of-grayscale-photo-of-bus-on-the-road.jpeg');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+          "
+        >
+          <div
+            style="
+              position: absolute;
+              inset: 0;
+              background-color: black;
+              opacity: 0.5;
+            "
+          ></div>
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              height: 100%;
+              text-align: center;
+              color: white;
+              z-index: 10;
+            "
+          >
+            <h1 style="font-size: 3rem; font-weight: bold; margin-bottom: 1rem;">
+              Let's Go Now!
+            </h1>
+            <button
+              style="
+                background-color: #ea580c;
+                padding: 0.5rem 1.5rem;
+                border-radius: 0.5rem;
+                border: none;
+                color: white;
+                cursor: pointer;
+                transition: background-color 0.3s;
+              "
+              onmouseover="this.style.backgroundColor='#c2410c'"
+              onmouseout="this.style.backgroundColor='#ea580c'"
+            >
+              Find Routes
+            </button>
+          </div>
         </section>
-
-        <!-- Image Grid Section -->
-        <section class="image-grid">
-            <img src="{% static 'images/cover/aa.jpg' %}" alt="Image 1">
-            <img src="{% static 'images/cover/bb.jpeg' %}" alt="Image 2">
-            <img src="{% static 'images/cover/cc.jpg' %}" alt="Image 3">
-            <img src="{% static 'images/cover/gg.jpeg' %}" alt="Image 4">
-            <img src="{% static 'images/cover/ee.jpg' %}" alt="Image 5">
-            <img src="{% static 'images/cover/oip.jpeg' %}" alt="Image 6">
-        </section>
-
-        <!-- Venue List Section -->
-        <section class="venue-list" id="venue-list">
-            {% for venue in venues %}
-                <div class="venue">
-                    {% if venue.image %}
-                        <img src="{{ venue.image.url }}" alt="{{ venue.name }}">
-                    {% else %}
-                        <p>No image available</p>
-                    {% endif %}
-                    <h3>{{ venue.name }}</h3>
-                    <div class="venue-details">
-                        <p><i class="fas fa-map-marker-alt"></i>{{ venue.address }}</p>
-                        <p><i class="fas fa-info-circle"></i>{{ venue.description }}</p>
-                        <p><i class="fas fa-envelope"></i>Contact: {{ venue.contact_email }}</p>
+        
+        <!-- 2nd Landing Page: Why Choose Us -->
+    <!-- 2nd Landing Page: Why Choose Us -->
+    <section
+    id="services"
+    style="
+      padding: 5rem 1.5rem;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(234, 88, 12, 0.6)), url('https://images.unsplash.com/photo-1506748686212-10a0a8b1c60b?fit=crop&w=1200&h=800&auto=format&dpr=2');
+      background-size: cover;
+      background-position: center;
+      text-align: center;
+      color: white;
+      font-family: 'Poppins', sans-serif;
+    "
+    >
+    <!-- Section Title -->
+    <h2
+      style="
+        font-size: 2.75rem;
+        font-weight: bold;
+        color: #ffd700;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      "
+    >
+      Why Choose Sarathi?
+    </h2>
+    <p
+      style="
+        font-size: 1.125rem;
+        color: #e4e4e7;
+        margin-bottom: 2rem;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+      "
+    >
+      Discover the benefits of traveling with Sarathi. We offer fast, reliable, and eco-friendly transport solutions.
+    </p>
+    
+    <!-- Service Cards Container -->
+    <div
+      style="width:100%;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+        justify-items: center;
+      "
+    >
+      <!-- Seamless Experience -->
+      <div
+        style="
+          background-color: rgba(0, 0, 0, 0.6);
+          padding: 2.5rem;
+          border-radius: 1rem;
+          transition: transform 0.3s ease, background-color 0.3s ease;
+          width: 100%;
+          max-width: 320px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        "
+        onmouseover="this.style.transform='scale(1.05)'; this.style.backgroundColor='rgba(0, 0, 0, 0.75)'"
+        onmouseout="this.style.transform='scale(1)'; this.style.backgroundColor='rgba(0, 0, 0, 0.6)'"
+      >
+        <div style="text-align: center;">
+          <img
+            src="https://img.icons8.com/ios/452/speedometer.png"
+            alt="Seamless Experience"
+            style="width: 50px; margin-bottom: 1.5rem;"
+          />
+        </div>
+        <h3 style="color: #ffd700; font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">
+          Seamless Experience
+        </h3>
+        <p style="color: #d1d5db;">
+          Enjoy a smooth and hassle-free journey with every trip, thanks to our streamlined process.
+        </p>
+      </div>
+    
+      <!-- Reliable Vehicles -->
+      <div
+        style="
+          background-color: rgba(0, 0, 0, 0.6);
+          padding: 2.5rem;
+          border-radius: 1rem;
+          transition: transform 0.3s ease, background-color 0.3s ease;
+          width: 100%;
+          max-width: 320px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        "
+        onmouseover="this.style.transform='scale(1.05)'; this.style.backgroundColor='rgba(0, 0, 0, 0.75)'"
+        onmouseout="this.style.transform='scale(1)'; this.style.backgroundColor='rgba(0, 0, 0, 0.6)'"
+      >
+        <div style="text-align: center;">
+          <img
+            src="https://img.icons8.com/ios/452/checked-flag.png"
+            alt="Reliable Vehicles"
+            style="width: 50px; margin-bottom: 1.5rem;"
+          />
+        </div>
+        <h3 style="color: #ffd700; font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">
+          Reliable Vehicles
+        </h3>
+        <p style="color: #d1d5db;">
+          Our fleet is always on time, offering modern, clean, and safe vehicles for your comfort.
+        </p>
+      </div>
+    
+      <!-- Customer Focused -->
+      <div
+        style="
+          background-color: rgba(0, 0, 0, 0.6);
+          padding: 2.5rem;
+          border-radius: 1rem;
+          transition: transform 0.3s ease, background-color 0.3s ease;
+          width: 100%;
+          max-width: 320px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        "
+        onmouseover="this.style.transform='scale(1.05)'; this.style.backgroundColor='rgba(0, 0, 0, 0.75)'"
+        onmouseout="this.style.transform='scale(1)'; this.style.backgroundColor='rgba(0, 0, 0, 0.6)'"
+      >
+        <div style="text-align: center;">
+          <img
+            src="https://img.icons8.com/ios/452/user-group-man-man.png"
+            alt="Customer Focused"
+            style="width: 50px; margin-bottom: 1.5rem;"
+          />
+        </div>
+        <h3 style="color: #ffd700; font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">
+          Customer Focused
+        </h3>
+        <p style="color: #d1d5db;">
+          We prioritize your comfort and safety, ensuring a pleasant and secure travel experience.
+        </p>
+      </div>
+    
+      <!-- Eco-Friendly Transport -->
+      <div
+        style="
+          background-color: rgba(0, 0, 0, 0.6);
+          padding: 2.5rem;
+          border-radius: 1rem;
+          transition: transform 0.3s ease, background-color 0.3s ease;
+          width: 100%;
+          max-width: 320px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        "
+        onmouseover="this.style.transform='scale(1.05)'; this.style.backgroundColor='rgba(0, 0, 0, 0.75)'"
+        onmouseout="this.style.transform='scale(1)'; this.style.backgroundColor='rgba(0, 0, 0, 0.6)'"
+      >
+        <div style="text-align: center;">
+          <img
+            src="https://img.icons8.com/ios/452/earth-globe.png"
+            alt="Eco-Friendly"
+            style="width: 50px; margin-bottom: 1.5rem;"
+          />
+        </div>
+        <h3 style="color: #ffd700; font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">
+          Eco-Friendly Transport
+        </h3>
+        <p style="color: #d1d5db;">
+          We care about the environment, offering eco-friendly vehicles to reduce your carbon footprint.
+        </p>
+      </div>
+    </div>
+    </section>
+    
+        <style>
+            /* General Styles */
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0;
+                padding: 0;
+                background: #f3f4f6;
+            }
+    
+            /* Section Titles */
+            .section-title {
+                text-align: center;
+                margin-bottom: 40px;
+                color: #ffffff;
+            }
+    
+            .section-title h2 {
+                font-size: 3.5rem;
+                font-weight: 700;
+                letter-spacing: 2px;
+                margin-bottom: 10px;
+                text-transform: uppercase;
+                color: #ff5722;
+            }
+    
+            .section-title h3 {
+                font-size: 1.6rem;
+                font-weight: 600;
+                color: #ff9800;
+                letter-spacing: 1.5px;
+                margin-bottom: 10px;
+            }
+    
+            .section-title p {
+                font-size: 1.2rem;
+                color: #ddd;
+                max-width: 700px;
+                margin: 0 auto;
+                line-height: 1.6;
+            }
+    
+            /* Testimonial Section */
+            .testimonial-slider {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                overflow: hidden;
+                position: relative;
+                background: url('https://via.placeholder.com/1920x800?text=Public+Transport+Image') center/cover no-repeat;
+                padding: 60px 0;
+                border-radius: 10px;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+                background-blur: 5px;
+            }
+    
+            .testimonial-slide {
+                display: none;
+                text-align: center;
+                background: rgba(0, 0, 0, 0.6);a
+                padding: 40px;
+                border-radius: 10px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+                width: 80%;
+                margin: 20px 0;
+                transition: transform 0.5s ease, opacity 0.5s ease;
+            }
+    
+            .testimonial-slide.active {
+                display: block;
+                opacity: 1;
+            }
+    
+            .quote-icon {
+                font-size: 3rem;
+                color: #ffd700;
+                margin-bottom: 20px;
+            }
+    
+            .testimonial-slide p {
+                font-size: 1.2rem;
+                color: #fff;
+                line-height: 1.8;
+                margin-bottom: 20px;
+                font-style: italic;
+            }
+    
+            .author {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-top: 20px;
+                gap: 15px;
+            }
+    
+            .author img {
+                border-radius: 50%;
+                width: 80px;
+                height: 80px;
+                transition: transform 0.3s ease;
+            }
+    
+            .author img:hover {
+                transform: scale(1.1);
+            }
+    
+            .author-info h4 {
+                color: #fff;
+                font-size: 1.1rem;
+                font-weight: 600;
+                margin-bottom: 5px;
+            }
+    
+            .author-info span {
+                color: #ddd;
+                font-size: 1rem;
+            }
+    
+            /* Slider Controls */
+            .slider-controls {
+                position: absolute;
+                top: 50%;
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                transform: translateY(-50%);
+            }
+    
+            .slider-controls button {
+                background-color: rgba(255, 255, 255, 0.7);
+                border: none;
+                font-size: 2rem;
+                color: #333;
+                padding: 15px;
+                cursor: pointer;
+                border-radius: 50%;
+                transition: background-color 0.3s ease, transform 0.3s ease;
+            }
+    
+            .slider-controls button:hover {
+                background-color: rgba(255, 255, 255, 1);
+                transform: scale(1.1);
+            }
+    
+            /* Project Section */
+            .project-section {
+                background: linear-gradient(135deg, #ff5722, #ff9800);
+                padding: 60px 0;
+                color: white;
+                text-align: center;
+                background-size: cover;
+                background-position: center;
+                height: 100vh;
+                background-image: url('https://images.pexels.com/photos/15166870/pexels-photo-15166870/free-photo-of-grayscale-photo-of-bus-on-the-road.jpeg');
+                background-size: cover;
+                background-position: center;
+                position: relative;
+            }
+    
+            .project-section h2 {
+                font-size: 2.5rem;
+                font-weight: 700;
+                margin-bottom: 20px;
+                text-transform: uppercase;
+                text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.4);
+            }
+    
+            .project-section p {
+                font-size: 1.2rem;
+                margin: 0 auto;
+                margin-bottom: 40px;
+                max-width: 800px;
+                text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+            }
+    
+            .project-cards {
+                display: flex;
+                justify-content: space-around;
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+    
+            .project-card {
+                background-color: #fff;
+                border-radius: 10px;
+                padding: 30px;
+                margin: 10px;
+                width: 250px;
+                text-align: center;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+    
+            .project-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2);
+            }
+    
+            .project-card h4 {
+                font-size: 1.5rem;
+                margin-bottom: 15px;
+                color: #333;
+            }
+    
+            .project-card p {
+                font-size: 1.1rem;
+                color: #555;
+            }
+        </style>
+    </head>
+    
+    
+        <!-- Start Testimonials Area -->
+        <section class="testimonials section" id="testimonial">
+            <div class="container">
+                <div class="section-title">
+                    <h3>Customer Reviews</h3>
+                    <h2>Our Testimonials</h2>
+                    <p>Discover what our passengers have to say about their experiences with Sarathi Public Transport.</p>
+                </div>
+    
+                <div class="testimonial-slider">
+                    <!-- Testimonial Slide 1 -->
+                    <div class="testimonial-slide active">
+                        <div class="quote-icon">
+                            <i class="lni lni-quotation"></i>
+                        </div>
+                        <p>“Sarathi’s services have revolutionized our daily commute. The buses are always on time, and the drivers are friendly and professional!”</p>
+                        <div class="author">
+                            <img src="https://via.placeholder.com/100x100" alt="Passenger 1">
+                            <div class="author-info">
+                                <h4>Ayesha Kumar</h4>
+                                <span>Product Manager</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="button-container">
-                        <button class="book-button" onclick="window.location.href='{% url 'book_venue' venue.id %}'">Book Now</button>
-                        <button class="packages-button" onclick="window.location.href='{% url 'user_packages' venue.id %}'">Show Packages</button>
+    
+                    <!-- Testimonial Slide 2 -->
+                    <div class="testimonial-slide">
+                        <div class="quote-icon">
+                            <i class="lni lni-quotation"></i>
+                        </div>
+                        <p>“The mobile app is user-friendly, and I can easily track the buses in real-time. It’s a game-changer for daily commuting!”</p>
+                        <div class="author">
+                            <img src="https://via.placeholder.com/100x100" alt="Passenger 2">
+                            <div class="author-info">
+                                <h4>Rahul Mehra</h4>
+                                <span>IT Specialist</span>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- Testimonial Slide 3 -->
+                    <div class="testimonial-slide">
+                        <div class="quote-icon">
+                            <i class="lni lni-quotation"></i>
+                        </div>
+                        <p>“The buses are always clean and well-maintained. I’m impressed with Sarathi’s commitment to quality service!”</p>
+                        <div class="author">
+                            <img src="https://via.placeholder.com/100x100" alt="Passenger 3">
+                            <div class="author-info">
+                                <h4>Sanya Rao</h4>
+                                <span>HR Executive</span>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- Slider Controls -->
+                    <div class="slider-controls">
+                        <button onclick="changeSlide(-1)">&#10094;</button>
+                        <button onclick="changeSlide(1)">&#10095;</button>
                     </div>
                 </div>
-            {% empty %}
-                <p>No venues available.</p>
-            {% endfor %}
+            </div>
         </section>
-    </div>
-  <br>
-  
+        <!-- End Testimonials Area -->
+    
+        <!-- Start Project Section -->
+        <section class="project-section">
+            <div class="container">
+                <h2>Our Projects</h2>
+                <p>We’re dedicated to bringing innovation and improved services to the public transport sector. Here are some of our major projects:</p>
+    
+                <div class="project-cards">
+                    <!-- Project 1 -->
+                    <div class="project-card">
+                        <h4>Smart Bus Stops</h4>
+                        <p>Introducing digital smart bus stops with real-time bus tracking and air quality monitoring.</p>
+                    </div>
+    
+                    <!-- Project 2 -->
+                    <div class="project-card">
+                        <h4>Eco-Friendly Fleet</h4>
+                        <p>Transitioning to electric and hybrid buses for a cleaner, greener future.</p>
+                    </div>
+    
+                    <!-- Project 3 -->
+                    <div class="project-card">
+                        <h4>Mobile Ticketing App</h4>
+                        <p>Seamless mobile ticketing app for hassle-free rides and instant bookings.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- End Project Section -->
+    
+        <script>
+            // JavaScript for the testimonial slider
+            let currentSlide = 0;
+            const slides = document.querySelectorAll('.testimonial-slide');
+    
+            function changeSlide(direction) {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + direction + slides.length) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }
+        </script>
+    
+    
+    
+    
+
+<!-- Footer -->
+<footer id="contact"
+style="background-color: black; padding: 2rem; text-align: center; color: white;"
+>
+<p>&copy; 2024 TransportApp. All Rights Reserved.</p>
+<p>Contact us: info@transportapp.com | +123 456 7890</p>
+
+</footer>
 </body>
-
 </html>
-<br>
 
-{% endblock %}
 

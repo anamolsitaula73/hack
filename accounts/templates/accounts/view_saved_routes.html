@@ -1,10 +1,16 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% load static %}
+
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saved Routes & Venue Owner Location</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
     <style>
         body {
@@ -43,15 +49,24 @@
         td {
             cursor: pointer;
         }
+
+        #search-input {
+            margin: 10px;
+            padding: 5px;
+            width: 300px;
+        }
     </style>
 </head>
 
 <body>
 
-    <h1>Saved Routes & Venue Owner Location</h1>
+    <h1 style="color:black;">Saved Routes & Venue Owner Location</h1>
+
+    <!-- Search input for filtering the table -->
+    <input type="text" id="search-input" placeholder="Search for routes..." oninput="searchTable()">
 
     <!-- Table displaying saved route data -->
-    <table>
+    <table id="routes-table" hidden>
         <thead>
             <tr>
                 <th>Route Name</th>
@@ -70,10 +85,8 @@
         </tbody>
     </table>
 
-    <h2>Bus Stops</h2>
-
     <!-- Table displaying all bus stops -->
-    <table id="bus-stops-table">
+    <table id="bus-stops-table" hidden>
         <thead>
             <tr>
                 <th>Bus Stop Name</th>
@@ -86,10 +99,8 @@
         </tbody>
     </table>
 
-    <h2>Venue Owner Details</h2>
-
     <!-- Table displaying venue owner details -->
-    <table id="owner-details-table" style="">
+    <table id="owner-details-table" hidden>
         <thead>
             <tr>
                 <th>Owner Name</th>
@@ -108,54 +119,41 @@
 
     <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
     <script>
-        // Initialize the map
         let map = L.map('map');
-        
-        // Custom icon for the user's location
         const userLocationIcon = L.icon({
-            iconUrl: '/static/images/userloc.png', // Path to your custom icon
-            iconSize: [32, 32],  // Size of the icon
-            iconAnchor: [16, 32], // Anchor the icon at the bottom center
-            popupAnchor: [0, -32] // Position of the popup relative to the icon
+            iconUrl: '/static/images/userloc.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
         });
 
         const busStopIcon = L.icon({
-            iconUrl: '/static/images/busstop.png', // Path to your bus stop icon
-            iconSize: [32, 32],  // Adjust the size of the icon
-            iconAnchor: [16, 32], // Anchor the icon at the bottom center
-            popupAnchor: [0, -32] // Position of the popup relative to the icon
+            iconUrl: '/static/images/busstop.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
         });
         
         const ownerIcon = L.icon({
-            iconUrl: '/static/images/download1.png', // Path to your venue owner icon
-            iconSize: [32, 32],  // Adjust the size of the icon
-            iconAnchor: [16, 32], // Anchor the icon at the bottom center
-            popupAnchor: [0, -32] // Position of the popup relative to the icon
+            iconUrl: '/static/images/download1.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
         });
-        
 
-        // Use geolocation to center the map on the user's current location
         navigator.geolocation.getCurrentPosition(function(position) {
             const userLat = position.coords.latitude;
             const userLng = position.coords.longitude;
 
-            // Center the map on the user's location
             map.setView([userLat, userLng], 13);
-
-            // Add the tile layer (map tiles from OpenStreetMap)
             L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                 attribution: 'Leaflet &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>',
                 maxZoom: 18
             }).addTo(map);
 
-            // Add a marker for the user's location with custom icon
-            L.marker([userLat, userLng], { icon: userLocationIcon })
-                .addTo(map)
-                .bindPopup('Your current location')
-                .openPopup();
+            L.marker([userLat, userLng], { icon: userLocationIcon }).addTo(map).bindPopup('Your current location').openPopup();
         }, function() {
-            // If geolocation fails, fall back to default coordinates
-            map.setView([28.2380, 83.9956], 11);  // Default coordinates (fallback)
+            map.setView([28.2380, 83.9956], 11);
             L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                 attribution: 'Leaflet &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>',
                 maxZoom: 18
@@ -169,29 +167,29 @@
 
         const busStops = [
             {% for bus_stop in all_bus_stops %}
-                {
-                    name: "{{ bus_stop.name }}",
-                    latitude: {{ bus_stop.latitude }},
-                    longitude: {{ bus_stop.longitude }},
-                    route: "{{ bus_stop.route }}"
-                },
+            {
+                name: "{{ bus_stop.name }}",
+                latitude: {{ bus_stop.latitude }},
+                longitude: {{ bus_stop.longitude }},
+                route: "{{ bus_stop.route }}"
+            },
             {% endfor %}
         ];
 
         const venueOwners = [
             {% for owner in owners %}
-                {
-                    username: "{{ owner.username }}",
-                    route: "{{ owner.route }}",
-                    bus_registration: "{{ owner.registration_number }}",
-                    verified: "{{ owner.verified }}",
-                    latitude: "{{ owner.latitude }}",
-                    longitude: "{{ owner.longitude }}"
-                },
+            {
+                username: "{{ owner.username }}",
+                route: "{{ owner.route }}",
+                bus_registration: "{{ owner.registration_number }}",
+                verified: "{{ owner.verified }}",
+                latitude: "{{ owner.latitude }}",
+                longitude: "{{ owner.longitude }}"
+            },
             {% endfor %}
         ];
-        // Function to fetch venue owner location data
-        let ownerLocationInterval = null; // Store the interval instance globally
+
+        let ownerLocationInterval = null;
 
         function fetchOwnerLocation(routeName) {
             fetch(`/api/get_venue_owner_location/?route=${routeName}`)
@@ -199,120 +197,123 @@
                 .then(data => {
                     if (data.ownerLocation) {
                         const { latitude, longitude, username } = data.ownerLocation;
-        
-                        console.log('Owner Location:', data.ownerLocation);
-        
-                        // Update the table with the owner's location
+
                         const tableBody = document.querySelector('#owner-details-table tbody');
                         const row = `<tr>
                                         <td>${username}</td>
                                         <td>${latitude}</td>
                                         <td>${longitude}</td>
                                      </tr>`;
-                        tableBody.innerHTML = row; // Clear and insert new data
-        
-                        // Add the owner's location marker to the map
+                        tableBody.innerHTML = row;
+
                         const ownerLocation = L.latLng(latitude, longitude);
-        
-                        // Clear previous markers if needed
+
                         if (window.ownerMarker) {
                             map.removeLayer(window.ownerMarker);
                         }
-        
-                        // Add the marker for the owner's location
+
                         window.ownerMarker = L.marker(ownerLocation, { icon: ownerIcon }).addTo(map)
-                        .bindPopup(`
-                        <strong>Latitude:</strong> ${latitude}<br>
-                        <strong>Longitude:</strong> ${longitude}<br>
-                        <strong>Seats:</strong> ${data.ownerLocation.seats}<br>
-
-                        <strong>Available Seats:</strong> ${data.ownerLocation.seats_available}<br>
-
-                        <strong>Bus Number:</strong> ${data.ownerLocation.bus_num || 'N/A'}<br>
-                    `);
-        
-                        // Center the map on the owner's location
+                            .bindPopup(`
+                            <strong>Latitude:</strong> ${latitude}<br>
+                            <strong>Longitude:</strong> ${longitude}<br>
+                            <strong>Seats:</strong> ${data.ownerLocation.seats}<br>
+                            <strong>Available Seats:</strong> ${data.ownerLocation.seats_available}<br>
+                            <strong>Bus Number:</strong> ${data.ownerLocation.bus_num || 'N/A'}<br>
+                        `);
                     } else {
                         console.error('No owner location found');
                     }
                 })
                 .catch(error => console.error('Error fetching owner location:', error));
         }
-        
+
         function showRouteDetails(routeName, routeCoordinates, startingPoint, destination) {
-            // Clear any previous intervals
             if (ownerLocationInterval) {
                 clearInterval(ownerLocationInterval);
                 ownerLocationInterval = null;
             }
-        
-            // Fetch owner location every 2 seconds for the selected route
+
             ownerLocationInterval = setInterval(() => fetchOwnerLocation(routeName), 2000);
-        
-            // Clear previous route and markers
+
             if (routeLine) {
                 map.removeLayer(routeLine);
             }
             markers.forEach(marker => map.removeLayer(marker));
             markers = [];
-        
-            // Draw the route
+
             const parsedCoordinates = typeof routeCoordinates === 'string' ? JSON.parse(routeCoordinates) : routeCoordinates;
             routeLine = L.polyline(parsedCoordinates.map(coord => [coord.lat, coord.lng]), {
                 color: 'blue',
                 weight: 5
             }).addTo(map);
-        
-            // Add starting and destination markers
+
             const startingLatLng = L.latLng(parsedCoordinates[0].lat, parsedCoordinates[0].lng);
             const destinationLatLng = L.latLng(parsedCoordinates[parsedCoordinates.length - 1].lat, parsedCoordinates[parsedCoordinates.length - 1].lng);
-        
+
             const blueIcon = L.icon({
                 iconUrl: 'https://unpkg.com/leaflet@1.8.0/dist/images/marker-icon.png',
                 iconSize: [25, 41],
                 iconAnchor: [12, 41]
             });
-        
-            const startMarker = L.marker(startingLatLng, { icon: blueIcon }).addTo(map).bindPopup('Starting Point: ' + startingPoint).openPopup();
-            const endMarker = L.marker(destinationLatLng, { icon: blueIcon }).addTo(map).bindPopup('Destination: ' + destination);
-        
-            markers.push(startMarker, endMarker);
-            map.fitBounds(routeLine.getBounds());
-        
-            // Display bus stops related to the route
-            displayBusStops(routeName);
-        
-            // Display venue owner details related to the route
-            displayVenueOwners(routeName);
-        }
-        
-        function displayBusStops(routeName) {
-            // Clear previous bus stop markers
-            busStopMarkers.forEach(marker => map.removeLayer(marker));
-            busStopMarkers = [];
 
-            // Update bus stops table and map
-            const tableBody = document.querySelector('#bus-stops-table tbody');
-            tableBody.innerHTML = '';
+            const startMarker = L.marker(startingLatLng, { icon: blueIcon }).addTo(map)
+                .bindPopup(`Starting Point: ${startingPoint}`);
+
+            const destinationMarker = L.marker(destinationLatLng, { icon: blueIcon }).addTo(map)
+                .bindPopup(`Destination: ${destination}`);
+            
+            markers.push(startMarker, destinationMarker);
+
+            updateBusStops(routeName);
+        }
+
+        function updateBusStops(routeName) {
+            const busStopTable = document.getElementById('bus-stops-table').getElementsByTagName('tbody')[0];
+            busStopTable.innerHTML = '';
 
             busStops.filter(busStop => busStop.route === routeName).forEach(busStop => {
-                // Add bus stop marker
-                const busStopLatLng = L.latLng(busStop.latitude, busStop.longitude);
-                const busStopMarker = L.marker(busStopLatLng, { icon: busStopIcon }).addTo(map).bindPopup(busStop.name);
-                busStopMarkers.push(busStopMarker);
+                const newRow = busStopTable.insertRow();
+                newRow.innerHTML = `
+                    <td>${busStop.name}</td>
+                    <td>${busStop.latitude}</td>
+                    <td>${busStop.longitude}</td>
+                `;
 
-                // Add bus stop to table
-                const row = `<tr>
-                               <td>${busStop.name}</td>
-                               <td>${busStop.latitude}</td>
-                               <td>${busStop.longitude}</td>
-                             </tr>`;
-                tableBody.innerHTML += row;
+                const marker = L.marker([busStop.latitude, busStop.longitude], { icon: busStopIcon }).addTo(map)
+                    .bindPopup(`Bus Stop: ${busStop.name}`);
+                busStopMarkers.push(marker);
             });
+
         }
 
-       
+        function searchTable() {
+            const searchValue = document.getElementById('search-input').value.toLowerCase();
+            const rows = document.getElementById('routes-table').getElementsByTagName('tr');
+        
+            // If there's no text in the search input, hide the table
+            if (searchValue === '') {
+                document.getElementById('routes-table').setAttribute('hidden', true);
+            } else {
+                document.getElementById('routes-table').removeAttribute('hidden');
+                
+                for (let i = 1; i < rows.length; i++) {
+                    const cells = rows[i].getElementsByTagName('td');
+                    let rowText = '';
+                    for (let j = 0; j < cells.length; j++) {
+                        rowText += cells[j].textContent.toLowerCase() + ' ';
+                    }
+                    
+                    if (rowText.includes(searchValue)) {
+                        rows[i].style.display = '';
+                    } else {
+                        rows[i].style.display = 'none';
+                    }
+                }
+            }
+        }
+        
     </script>
 </body>
 
 </html>
+{% endblock %}

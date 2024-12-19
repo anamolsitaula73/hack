@@ -1,298 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    {% load static %}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sarathi</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swiper@11/swiper-bundle.min.css"
+    />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Event Planner{% endblock %}</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;600;700&display=swap" rel="stylesheet">
-    <!-- Custom CSS -->
+    <script src="https://unpkg.com/swiper@11/swiper-bundle.min.js"></script>
     <style>
-        :root {
-            --Soft-Blue: #4b6cb7;
-            --Soft-Red: #ff6b6b;
-            --Very-Dark-Blue: #2d3a4b;
-            --Grayish-Blue: #a8b2d1;
-            --Light-Gray: #f4f4f9;
-            --box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            --Navbar-Color: #ff5722; /* Vibrant Orange */
-            --Navbar-Text: #ffffff; /* White Text */
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--Light-Gray);
-            background-image: url('{% static "images/aaaa/7.jpg" %}');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        .container {
-            flex: 1; /* This ensures the container takes up the remaining space */
-        }
-
+      .transition-all {
+        transition: all 0.3s ease-in-out;
+      }
+      @media (max-width: 768px) {
         .navbar {
-            background-color: var(--Navbar-Color);
+          flex-direction: column;
         }
-
-        .navbar .navbar-brand, .navbar-nav .nav-link:hover{
-    color: white;
-    transition: color 0.3s, text-decoration 0.3s;
-}
-
-        .navbar .navbar-brand,
-        .navbar-nav .nav-link {
-            color: white;
-            transition: color 0.3s, text-decoration 0.3s;
-        }
-
-       
-
-        .navbar-light .navbar-nav .nav-link {
-         color: rgba(255, 255, 255);
-}
-           .navbar-light .navbar-nav .nav-link:hover{
-           color: rgba(255, 255, 255);
-           text-decoration: underline;
-
-                 }
-
-        .navbar-nav .nav-item .button {
-            background-color: green;
-            color: white;
-            border: none;
-            border-radius: 7px;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .navbar-nav .nav-item .button:hover {
-            background-color: red;
-            color: white;
-        }
-
-        .navbar-toggler {
-            border: none;
-        }
-
-        .navbar-toggler-icon {
-            background-color: #fff;
-            border-radius: 5px;
-        }
-
-        section {
-            padding: 2rem 9%;
-        }
-
-        .home,
-        .features,
-        .download {
-            padding-top: 5rem;
-        }
-
-        .home .content h1,
-        .features .row .content h1 {
-            font-size: 3rem;
-            color: var(--Very-Dark-Blue);
-        }
-
-        .home .content p,
-        .features .row .content p,
-        .download .box p {
-            color: var(--Grayish-Blue);
-        }
-
-        .home .content .home-btn,
-        .download .box:hover {
-            background-color: var(--Soft-Blue);
-            color: #fff;
-        }
-
-        .home .content .home-btn:hover {
-            background-color: #fff;
-            color: var(--Soft-Blue);
-            box-shadow: none;
-        }
-
-        .footer {
-            background-color: var(--Very-Dark-Blue);
-            color: #fff;
-            padding: 2rem 0;
-            flex-shrink: 0; /* Prevents the footer from shrinking */
-            width: 100%;
-        }
-
-        .footer .box-container {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-
-        .footer .box {
-            flex: 1 1 30%;
-            margin: 1rem;
-        }
-
-        .footer .box h3 {
-            font-size: 1.8rem;
-            color: #fff;
-            margin-bottom: 1rem;
-        }
-
-        .footer .box a {
-            display: block;
-            color: var(--Grayish-Blue);
-            margin: 0.5rem 0;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .footer .box a:hover {
-            color: var(--Soft-Red);
-        }
-
-        .footer .credit {
-            text-align: center;
-            padding: 1rem;
-            background-color: var(--Very-Dark-Blue);
-            color: var(--Grayish-Blue);
-            border-top: 1px solid #fff;
-        }
-
-        .round-img {
-    border-radius: 50%; /* Makes the image round */
-    border: 3px solid; /* Adds a border around the image */
-}
-
-
-        .footer .credit span {
-            color: var(--Soft-Red);
-        }
-
-        /* Media Queries */
-        @media (max-width: 991px) {
-            html {
-                font-size: 55%;
-            }
-
-            .header {
-                padding: 2rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .navbar .navbar-nav {
-                text-align: center;
-            }
-
-            .footer .box {
-                flex: 1 1 100%;
-                margin: 1rem 0;
-            }
-        }
-
-        @media (max-width: 450px) {
-            html {
-                font-size: 50%;
-            }
-        }
+      }
     </style>
-    {% block extra_css %}{% endblock %}
-</head>
-<body>
-
-<nav class="navbar navbar-expand-lg navbar-light">
-    <a class="navbar-brand" href="{% url 'home' %}">
-        <img src="{% static 'images/aaaa/eventplanner.png' %}" width="90px" height="55px" class="round-img">
-    </a>
-    
+  </head>
+  <body style="font-family: sans-serif; background-color: black; color: white; margin: 0;">
+    <!-- Navbar -->
+ 
+    <nav
+    class="navbar"
+    style="
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(90deg, #ff7a18, #ff5403, #ea580c);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      font-family: Arial, sans-serif;
+    "
+  >
+    <!-- Logo -->
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <!-- Logo Wrapper -->
+      <div
+        style="
+          height: 100px;
+          width: 100px;
+          background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, rgba(244, 154, 98, 0) 70%);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          /* box-shadow: 0 0 20px 8px rgba(255, 255, 255, 0.3); */
+        "
+      >
+      <a href="{%url 'home'%}">
+        <img
+          src="/static/images/sarathi.png"
+          alt="SARATHI Logo"
+          style="
+            height: 85px;
+            width: 85px;
+            object-fit: cover;
+            border-radius: 50%;
+          "
+        /></a>
+      </div>
   
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'home' %}">Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'view-routes' %}">Routes</a>
-            </li>
-           
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'about_us' %}">About Us</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'signup_owner' %}"><button class="button">Become a Partner</button></a>
-            </li>
-            {% if user.is_authenticated %}
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'my-profile' %}">
-                    <i class="fas fa-user"></i> <!-- Font Awesome user icon -->
-                    My Profile
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-            </li>
-            {% else %}
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'login' %}">Login</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
-            </li>
-            {% endif %}
-        </ul>
+      <!-- Title -->
+      <a href="{%url 'home'%}" style="text-decoration:none;">
+        <span
+          style="
+            font-size: 2.25rem;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            background: linear-gradient(90deg, #ffffff, #ffd700, #fff5cc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+          "
+        >
+          SARATHI-<i style="font-size:24px;">Urban Mobility Hub</i>
+        </span>
+      </a>
     </div>
-</nav>
+  
+    <!-- Navigation Menu -->
+    <ul
+      style="
+        display: flex;
+        gap: 2rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        align-items: center;
+      "
+    >
+      <li>
+        <a
+          href="{%url 'home'%}"
+          style="
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s ease-in-out, transform 0.3s;
+          "
+          onmouseover="this.style.color='#ffd700'; this.style.transform='scale(1.1)';"
+          onmouseout="this.style.color='white'; this.style.transform='scale(1)';"
+        >
+          Home
+        </a>
+      </li>
+      <li>
+        <a
+          href="{% url 'view-routes' %}"
+          style="
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s ease-in-out, transform 0.3s;
+          "
+          onmouseover="this.style.color='#ffd700'; this.style.transform='scale(1.1)';"
+          onmouseout="this.style.color='white'; this.style.transform='scale(1)';"
+        >
+          Routes
+        </a>
+      </li>
+    
+     
+      <li>
+        <a
+          href="#contact"
+          style="
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s ease-in-out, transform 0.3s;
+          "
+          onmouseover="this.style.color='#ffd700'; this.style.transform='scale(1.1)';"
+          onmouseout="this.style.color='white'; this.style.transform='scale(1)';"
+        >
+          Contact
+        </a>
+      </li>
+    </ul>
+  
 
-<div class="container mt-4">
+  </nav>
+  <style>
+    #myBtn {
+      display: none; 
+      position: fixed;
+      bottom: 40px;
+      right: 15px;
+      z-index: 9999;
+      font-size: 20px;
+      border: none;
+      outline: none;
+      background-color: #164193;
+      color: white;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 10px;
+      transition: transform 1s ease, opacity 1s ease;
+      font-family: "Arial Unicode MS", "Segoe UI Symbol", sans-serif;
+    }
+    #myBtn:hover{
+      background-color: #164193;
+    
+    }
+     </style>
+    <button onclick="topFunction()" id="myBtn" title="Go to top"><img src="static/images/up1.png" style="width: 25px; height: 25px;">
+    </button>
+    <script>
+    
+    // Get the button
+    let mybutton = document.getElementById("myBtn");
+    
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function() {
+     scrollFunction();
+    };
+    
+    function scrollFunction() {
+     if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+         mybutton.style.display = "block";
+         
+     } else {
+         mybutton.style.display = "none";
+     }
+    }
+    
+    // When the user clicks on the button, scroll to the top of the document with smooth behavior
+    function topFunction() {
+     window.scrollTo({
+         top: 0,
+         behavior: 'smooth' // This adds the smooth scrolling effect
+     });
+    }
+    </script>
+
     {% block content %}{% endblock %} 
-</div>
-<br>
 
+<!-- Footer -->
+<footer id="contact"
+style="background-color: black; padding: 2rem; text-align: center; color: white;bottom:0;position:relative;"
+>
+<p>&copy; 2024 TransportApp. All Rights Reserved.</p>
+<p>Contact us: info@transportapp.com | +123 456 7890</p>
 
-<section class="footer" id="footer">
-    <div class="box-container">
-        <div class="box">
-            <h3>Quick Links</h3>
-            <a href="/"><i class="fas fa-chevron-right"></i> Home</a>
-        </div>
-        <div class="box">
-            <h3>Contact Info</h3>
-            <a href="#"><i class="fas fa-phone"></i> 9865474518</a>
-            <a href="#"><i class="fas fa-phone"></i> 9824486042</a>
-            <a href="#"><i class="fas fa-envelope"></i> kp842586@gmail.com</a>
-            <a href="#"><i class="fas fa-envelope"></i> 20202004@student.bic.edu.np</a>
-            <a href="#"><i class="fas fa-map-marker-alt"></i> Bharatpur, Nepal</a>
-        </div>
-        <div class="box">
-            <h3>Follow Us</h3>
-            <a href="#"><i class="fab fa-facebook-f"></i> Facebook</a>
-            <a href="#"><i class="fab fa-twitter"></i> Twitter</a>
-            <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
-            <a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a>
-            <a href="#"><i class="fab fa-pinterest"></i> Pinterest</a>
-        </div>
-    </div>
-    <div class="credit">
-        Created by <span>Team Event Planner</span> | All rights reserved
-    </div>
-</section>
-
-<!-- Bootstrap JS and dependencies -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
+</footer>
 </body>
 </html>
