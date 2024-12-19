@@ -289,7 +289,6 @@ class AboutUsView(TemplateView):
     template_name = 'accounts/aboutus.html'
 
 
-
 from django.shortcuts import render
 from route_manager.models import Route, BusStop
 from owner.models import VenueOwner  # Import VenueOwner model
@@ -299,24 +298,24 @@ def view_all_routes(request):
     # Fetch all saved routes, bus stops, and venue owners from the database
     routes = Route.objects.all()
     bus_stops = BusStop.objects.all()
-    venue_owners = VenueOwner.objects.all()  # Fetch all VenueOwner instances
+    venue_owners = VenueOwner.objects.select_related('route', 'user').all()  # Efficiently fetch related data
 
     # Prepare the routes data to pass to the template
     route_data = []
     for route in routes:
+
         # Fetch the bus stops for each route
-        route_bus_stops = BusStop.objects.filter(route=route)
+        route_bus_stops = bus_stops.filter(route=route)
         bus_stops_data = [
             {'name': bus_stop.name, 'latitude': bus_stop.latitude, 'longitude': bus_stop.longitude}
             for bus_stop in route_bus_stops
         ]
 
         # Fetch VenueOwner associated with the route (if any)
-        venue_owner_data = None
-        venue_owner = venue_owners.filter(route=route).first()  # Get the first venue owner for this route
-        if venue_owner:
-            venue_owner_data = {
-                'username': venue_owner.user,
+        route_venue_owners = venue_owners.filter(route=route)
+        venue_owner_data = [
+            {
+                'username': venue_owner.user.username,
                 'registration_number': venue_owner.bus_registration_number,
                 'registration_photo': venue_owner.bus_registration_photo.url if venue_owner.bus_registration_photo else None,
                 'verified': venue_owner.verified,
@@ -324,6 +323,8 @@ def view_all_routes(request):
                 'longitude': venue_owner.longitude,
                 'timestamp': venue_owner.timestamp
             }
+            for venue_owner in route_venue_owners
+        ]
 
         # Add the bus stop and venue owner data to the route data
         route_data.append({
@@ -332,11 +333,90 @@ def view_all_routes(request):
             'destination': route.destination,
             'route_data': json.loads(route.route_data),  # Convert the route_data JSON back to a list of coordinates
             'bus_stops': bus_stops_data,  # Include bus stops data specific to this route
-            'venue_owner': venue_owner_data  # Include venue owner data for this route
+            'venue_owners': venue_owner_data  # Include all venue owners for this route
         })
 
     # Pass all bus stops, route data, and venue owners to the template
+    all_owners = [
+        {
+            'username': owner.user.username,
+            'route': owner.route.route_name if owner.route else "No Route Assigned",
+            'registration_number': owner.bus_registration_number,
+            'verified': owner.verified,
+            'latitude':owner.latitude,
+            'longitude':owner.longitude,
+        }
+        for owner in venue_owners
+    ]
+    for owner in all_owners:
+     print(owner)
+
+
     return render(request, 'accounts/view_saved_routes.html', {
         'routes': route_data,
-        'all_bus_stops': bus_stops
+        'all_bus_stops': bus_stops,
+        'owners':all_owners    # Pass the list of all owners
     })
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from owner.models import VenueOwner  # Assuming you have a VenueOwner model
+
+class VenueOwnerByRouteView(APIView):
+    def get(self, request, route_name):
+        try:
+            # Fetch venue owners by route name
+            from owner.models import VenueOwner
+            owners = VenueOwner.objects.filter(route="bhojad", verified=True)
+            for owner in owners:
+             print(owner.user.username, owner.route)
+
+
+            # Prepare the data to return
+            owners_data = []
+            for owner in owners:
+                owners_data.append({
+                    'username': owner.user.username,  # Assuming 'user' is a ForeignKey to User model
+                    'route': owner.route,
+                    'bus_registration': owner.bus_registration_number,
+                    'latitude': owner.latitude,
+                    'longitude': owner.longitude,
+                    'verified': owner.verified
+                })
+
+            return Response(owners_data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            # In case of any error, return a server error response
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from owner.models import VenueOwner
+
+@api_view(['GET'])
+def get_venue_owner_location(request):
+    route = request.GET.get('route')
+    
+    if not route:
+        return Response({'error': 'Route parameter is required'}, status=400)
+    
+    try:
+        owner = VenueOwner.objects.filter(route__route_name=route).first()  # Assuming Route has route_name
+        
+        if not owner:
+            return Response({'error': 'No venue owner found for this route'}, status=404)
+        
+        # Return the owner's location details as a response
+        return Response({
+            'ownerLocation': {
+                'latitude': owner.latitude,
+                'longitude': owner.longitude,
+                'username': owner.user.username  # Assuming the User model has a username field
+            }
+        })
+
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)

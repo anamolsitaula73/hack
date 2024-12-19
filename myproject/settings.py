@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     "route_manager",
     "owner",
     "tinymce",
-    "events",
     "venues",
     "accounts",
     "django.contrib.admin",
