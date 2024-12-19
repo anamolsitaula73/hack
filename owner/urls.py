@@ -5,7 +5,7 @@ from .views import (
     owner_pricing_packages, owner_add_pricing_package,
     delete_package, edit_package, user_packages, edit_venue,book_venue,show_routes,
     booking_success,view_bookings,cancel_owner_booking,edit_venue_image,confirm_booking,check_out_booking,show_owner_route,update_location,
-    AboutUsView, GetLatestLocationView
+    AboutUsView, GetLatestLocationView,enter_venue,exit_venue
 )
 
 urlpatterns = [
@@ -40,7 +40,8 @@ urlpatterns = [
     
     path('api/get-latest-location/', GetLatestLocationView.as_view(), name='get-latest-location'),
     path('update-location/', update_location, name='update_location'),
-    # path('api/update-location/', update_location, name='update_location'),
+    path('enter/<int:owner_id>/', enter_venue, name='enter_venue'),
+    path('exit/<int:owner_id>/', exit_venue, name='exit_venue'),
 
 
 

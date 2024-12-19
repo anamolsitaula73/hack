@@ -6,25 +6,26 @@ from django.contrib import admin
 from .models import Venue, PricingPackage, Booking
 
 class VenueOwnerAdmin(admin.ModelAdmin):
-    list_display = ['user', 'email','latitude','longitude','timestamp','bus_registration_number','route', 'verified']
+    list_display = ['user', 'email','seats','occupancy','seats_available','latitude','longitude','timestamp','bus_registration_number','route', 'verified']
     list_filter = ['verified']
     actions = ['verify_owners']
+
 
     def email(self, obj):
         return obj.user.email
 
-    def verify_owners(self, request, queryset):
-        queryset.update(verified=True)
-        for owner in queryset:
-            send_mail(
-                'Registration Verified',
-                'Your registration has been verified.',
-                'eventgenius888@gmail.com',
-                [owner.user.email],
-                fail_silently=False,
-            )
+    # def verify_owners(self, request, queryset):
+    #     queryset.update(verified=True)
+    #     for owner in queryset:
+    #         send_mail(
+    #             'Registration Verified',
+    #             'Your registration has been verified.',
+    #             'eventgenius888@gmail.com',
+    #             [owner.user.email],
+    #             fail_silently=False,
+    #         )
 
-    verify_owners.short_description = 'Verify selected venue owners'
+    # verify_owners.short_description = 'Verify selected venue owners'
 
 admin.site.register(VenueOwner, VenueOwnerAdmin)
 

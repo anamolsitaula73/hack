@@ -224,6 +224,10 @@
                         .bindPopup(`
                         <strong>Latitude:</strong> ${latitude}<br>
                         <strong>Longitude:</strong> ${longitude}<br>
+                        <strong>Seats:</strong> ${data.ownerLocation.seats}<br>
+
+                        <strong>Available Seats:</strong> ${data.ownerLocation.seats_available}<br>
+
                         <strong>Bus Number:</strong> ${data.ownerLocation.bus_num || 'N/A'}<br>
                     `);
         

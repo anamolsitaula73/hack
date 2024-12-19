@@ -36,8 +36,104 @@
     </style>
 </head>
 <body>
+
+    <style>
+        /* Popup style */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+        .popup button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        /* Style for 'Enter' link */
+.venue-item.enter {
+    color: white;
+    background-color: blue;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.venue-item.enter:hover {
+    background-color: darkblue;
+}
+
+/* Style for 'Exit' link */
+.venue-item.exit {
+    color: white;
+    background-color: red;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.venue-item.exit:hover {
+    background-color: darkred;
+}
+
+    </style>
+
+
+<!-- The popup -->
+<div id="popup" class="popup">
+    <p id="popupMessage"></p>
+    <button onclick="closePopup()">Okay</button>
+</div>
+
+<script>
+    // Function to show the popup with the message
+    function showPopup(message) {
+        const popup = document.getElementById('popup');
+        const popupMessage = document.getElementById('popupMessage');
+        popupMessage.textContent = message;
+        popup.style.display = 'block';
+    }
+
+    // Function to close the popup and redirect
+    function closePopup() {
+        const popup = document.getElementById('popup');
+        popup.style.display = 'none';
+        // Redirect to another page (for example, show_owner_route)
+        window.location.href = '/show_owner_route/';
+    }
+
+    // Check if the URL contains a message parameter (set in the view)
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get('status');
+    const message = urlParams.get('message');
+
+    if (status && message) {
+        if (status === 'success') {
+            showPopup(message);
+        }
+    }
+</script>
+
+
+
     <div style="background-color:white;">
         <h1>Real-Time Location Tracking</h1>
+        <button id="toggle-location" class="toggle-button">Start Tracking Location</button>
+        <a href="{% url 'enter_venue' owner.id %}" class="venue-item enter">Enter</a>
+        <a href="{% url 'exit_venue' owner.id %}" class="venue-item exit">Exit</a>
+        
+        
+
         <div id="map"></div>
 
         <h2>Route Details</h2>
@@ -175,5 +271,118 @@
                 .bindPopup(`<strong>${stop.name}</strong><br>(${stop.lat}, ${stop.lng})`);
         });
     </script>
+
+
+    <style>
+        .toggle-button {
+            background-color: green;
+            color: white;
+            padding: 15px 30px; /* Increased padding for larger button */
+            font-size: 18px; /* Larger font size */
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease; /* Smooth transition */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    
+        .toggle-button:hover {
+            background-color: darkgreen; /* Change to dark green on hover */
+            transform: scale(1.1); /* Slightly increase size on hover */
+        }
+    </style>
+    
+        
+            <!-- Toggle button for starting and resetting location tracking -->
+        
+            <script>
+                // Get the button element
+                const toggleLocationButton = document.getElementById('toggle-location');
+                let locationInterval; // Variable to hold the interval ID
+        
+                // Function to send location data to the backend
+                function updateLocation(latitude, longitude, timestamp) {
+                    fetch('/update-location/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            latitude: latitude,
+                            longitude: longitude,
+                            timestamp: timestamp
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === "success") {
+                            console.log("Location updated successfully!");
+                        } else {
+                            console.error("Backend error:", data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error in request:", error);
+                        alert("Error updating location.");
+                    });
+                }
+        
+                // Add click event listener to the button
+                toggleLocationButton.addEventListener('click', function() {
+                    if (toggleLocationButton.innerText === "Start Tracking Location") {
+                        // Disable the button to prevent multiple clicks
+                        toggleLocationButton.disabled = true;
+                        toggleLocationButton.innerText = "Tracking...";
+        
+                        // Start sending location every 2 seconds
+                        locationInterval = setInterval(function() {
+                            if (navigator.geolocation) {
+                                navigator.geolocation.getCurrentPosition(function(position) {
+                                    const latitude = position.coords.latitude;
+                                    const longitude = position.coords.longitude;
+                                    const timestamp = new Date().toISOString(); // Device timestamp
+        
+                                    // Log the data
+                                    console.log("Latitude:", latitude, "Longitude:", longitude, "Timestamp:", timestamp);
+        
+                                    // Send the location and timestamp to the backend
+                                    updateLocation(latitude, longitude, timestamp);
+                                }, function(error) {
+                                    alert('Error fetching location: ' + error.message);
+                                    console.error("Geolocation error:", error);
+                                    clearInterval(locationInterval); // Stop the interval if there's an error
+                                });
+                            } else {
+                                alert('Geolocation is not supported by this browser.');
+                                clearInterval(locationInterval); // Stop the interval if geolocation is not supported
+                            }
+                        }, 100); // 2000 ms = 2 seconds
+        
+                        // Change button text to "Reset Location" after tracking starts
+                        toggleLocationButton.innerText = "Reset Location";
+                        toggleLocationButton.disabled = false;
+                    } else {
+                        // Reset location to (0, 0)
+                        const latitude = 0;
+                        const longitude = 0;
+                        const timestamp = new Date().toISOString(); // Device timestamp
+        
+                        // Log the reset location
+                        console.log("Location reset to Latitude: 0, Longitude: 0, Timestamp:", timestamp);
+        
+                        // Send the reset location to the backend
+                        updateLocation(latitude, longitude, timestamp);
+        
+                        // Stop location tracking
+                        clearInterval(locationInterval);
+        
+                        // Change button text to "Start Tracking Location"
+                        toggleLocationButton.innerText = "Start Tracking Location";
+                    }
+                });
+            </script>
+
+            
 </body>
 </html>

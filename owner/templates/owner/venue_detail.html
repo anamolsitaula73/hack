@@ -255,15 +255,12 @@
                     <div class="edit-venue-container">
                         <form method="post" action="{% url 'edit_venue' pk=venue.id %}" enctype="multipart/form-data" class="edit-form">
                             {% csrf_token %}
-                            <p><label for="id_name">Name:</label> <input type="text" name="name" id="id_name" value="{{ venue.driver_name }}"></p>
+                            <p><label for="id_name">Driver Name:</label> <input type="text" name="name" id="id_name" value="{{ venue.driver_name }}"></p>
                             <p><label for="id_address">Address:</label> <input type="text" name="address" id="id_address" value="{{ venue.address }}"></p>
                             <p><label for="id_description">Description:</label> <textarea name="description" id="id_description">{{ venue.description }}</textarea></p>
                             <p><label for="id_contact_email">Contact Email:</label> <input type="email" name="contact_email" id="id_contact_email" value="{{ venue.contact_email }}" readonly></p>
                             <p><label for="id_contact_num">Contact Number:</label> <input type="number" name="contact_num" id="id_contact_num" value="{{ venue.contact_num }}"></p>
                             <p><label for="id_zip_code">Zip Code:</label> <input type="text" name="zip_code" id="id_zip_code" value="{{ venue.zip_code }}"></p>
-                            <p><label for="id_available_slots">Available Slots:</label> <input type="number" name="available_slots" id="id_available_slots" value="{{ venue.seats_available }}" readonly></p>
-                            <p><label for="id_occupancy">Occupancy:</label> <input type="number" name="occupancy" id="id_occupancy" value="{{ venue.occupancy }}"  readonly></p>
-                            <p><label for="id_total_slots">Total Slots:</label> <input type="number" name="total_slots" id="id_total_slots" value="{{ venue.seats }}"></p>
                             <button type="submit">Save</button>
                         </form>
                     </div>
@@ -273,7 +270,7 @@
                     {% comment %} <a href="{% url 'owner_add_pricing_package' venue.id %}" class="venue-item a">Add Package</a> {% endcomment %}
                     {% comment %} <a href="{% url 'view_bookings' venue.id %}" class="venue-item a">View Bookings</a> {% endcomment %}
                     <a href="{% url 'show_owner_route' %}" class="venue-item a">Show Route</a>
-                   <button id="toggle-location" class="toggle-button">Start Tracking Location</button>
+                    
 
 
 
@@ -318,115 +315,9 @@
     }
 </script>
 
-<style>
-    .toggle-button {
-        background-color: green;
-        color: white;
-        padding: 15px 30px; /* Increased padding for larger button */
-        font-size: 18px; /* Larger font size */
-        font-weight: bold;
-        border: none;
-        border-radius: 50px;
-        cursor: pointer;
-        transition: all 0.3s ease; /* Smooth transition */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
 
-    .toggle-button:hover {
-        background-color: darkgreen; /* Change to dark green on hover */
-        transform: scale(1.1); /* Slightly increase size on hover */
-    }
-</style>
 
     
-        <!-- Toggle button for starting and resetting location tracking -->
-    
-        <script>
-            // Get the button element
-            const toggleLocationButton = document.getElementById('toggle-location');
-            let locationInterval; // Variable to hold the interval ID
-    
-            // Function to send location data to the backend
-            function updateLocation(latitude, longitude, timestamp) {
-                fetch('/update-location/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        latitude: latitude,
-                        longitude: longitude,
-                        timestamp: timestamp
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === "success") {
-                        console.log("Location updated successfully!");
-                    } else {
-                        console.error("Backend error:", data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error("Error in request:", error);
-                    alert("Error updating location.");
-                });
-            }
-    
-            // Add click event listener to the button
-            toggleLocationButton.addEventListener('click', function() {
-                if (toggleLocationButton.innerText === "Start Tracking Location") {
-                    // Disable the button to prevent multiple clicks
-                    toggleLocationButton.disabled = true;
-                    toggleLocationButton.innerText = "Tracking...";
-    
-                    // Start sending location every 2 seconds
-                    locationInterval = setInterval(function() {
-                        if (navigator.geolocation) {
-                            navigator.geolocation.getCurrentPosition(function(position) {
-                                const latitude = position.coords.latitude;
-                                const longitude = position.coords.longitude;
-                                const timestamp = new Date().toISOString(); // Device timestamp
-    
-                                // Log the data
-                                console.log("Latitude:", latitude, "Longitude:", longitude, "Timestamp:", timestamp);
-    
-                                // Send the location and timestamp to the backend
-                                updateLocation(latitude, longitude, timestamp);
-                            }, function(error) {
-                                alert('Error fetching location: ' + error.message);
-                                console.error("Geolocation error:", error);
-                                clearInterval(locationInterval); // Stop the interval if there's an error
-                            });
-                        } else {
-                            alert('Geolocation is not supported by this browser.');
-                            clearInterval(locationInterval); // Stop the interval if geolocation is not supported
-                        }
-                    }, 1000); // 2000 ms = 2 seconds
-    
-                    // Change button text to "Reset Location" after tracking starts
-                    toggleLocationButton.innerText = "Reset Location";
-                    toggleLocationButton.disabled = false;
-                } else {
-                    // Reset location to (0, 0)
-                    const latitude = 0;
-                    const longitude = 0;
-                    const timestamp = new Date().toISOString(); // Device timestamp
-    
-                    // Log the reset location
-                    console.log("Location reset to Latitude: 0, Longitude: 0, Timestamp:", timestamp);
-    
-                    // Send the reset location to the backend
-                    updateLocation(latitude, longitude, timestamp);
-    
-                    // Stop location tracking
-                    clearInterval(locationInterval);
-    
-                    // Change button text to "Start Tracking Location"
-                    toggleLocationButton.innerText = "Start Tracking Location";
-                }
-            });
-        </script>
   
 
 {% endblock %}

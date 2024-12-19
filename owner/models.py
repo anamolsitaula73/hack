@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from tinymce.models import HTMLField
 from route_manager.models import Route 
 from datetime import datetime
-
 class VenueOwner(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bus_registration_number = models.CharField(max_length=100)
@@ -14,30 +13,18 @@ class VenueOwner(models.Model):
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     timestamp = models.DateTimeField(default=datetime.now)
-    
-    # Reference to Venue
-    venue = models.OneToOneField('Venue', on_delete=models.CASCADE, null=True, blank=True)
-    
-    # Seats and occupancy
-    seats = models.PositiveIntegerField(default=0, editable=False)
-    occupancy = models.PositiveIntegerField(default=0, editable=False)
-    seats_available = models.PositiveIntegerField(default=0, editable=False)
-
-    def sync_with_venue(self):
-        """Sync data from the related Venue."""
-        if self.venue:
-            self.seats = self.venue.seats
-            self.occupancy = self.venue.occupancy
-            self.seats_available = self.venue.seats_available
-            self.save()
+    seats = models.PositiveIntegerField(default=0)  # Total seats on the bus
+    occupancy = models.PositiveIntegerField(default=0)  # Current occupancy
+    seats_available = models.PositiveIntegerField(editable=False)  # Calculated available seats
 
     def save(self, *args, **kwargs):
-        # Ensure data is synced with Venue before saving
-        self.sync_with_venue()
+        # Automatically calculate available seats before saving
+        self.seats_available = self.seats - self.occupancy
         super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.user.username}'s Bus - {self.bus_registration_number}"
+
 
 
 class Venue(models.Model):

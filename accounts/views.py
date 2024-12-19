@@ -415,6 +415,9 @@ def get_venue_owner_location(request):
                 'bus_num':owner.bus_registration_number,
                 'latitude': owner.latitude,
                 'longitude': owner.longitude,
+                'seats': owner.seats,
+                'seats_available': owner.seats_available,
+
                 'username': owner.user.username  # Assuming the User model has a username field
             }
         })

@@ -628,3 +628,41 @@ def update_location(request):
             return JsonResponse({"status": "error", "message": f"An error occurred: {str(e)}"}, status=500)
 
     return JsonResponse({"status": "error", "message": "Invalid request method."}, status=400)
+
+
+from django.shortcuts import get_object_or_404, redirect
+from django.http import JsonResponse
+from .models import VenueOwner
+
+from django.shortcuts import get_object_or_404, redirect
+from django.http import JsonResponse
+from .models import VenueOwner
+
+from django.shortcuts import get_object_or_404, redirect
+from django.http import JsonResponse
+from .models import VenueOwner
+
+def enter_venue(request, owner_id):
+    owner = get_object_or_404(VenueOwner, id=owner_id)
+    if owner.occupancy < owner.seats:
+        owner.occupancy += 1
+        owner.save()
+        # Redirect to 'show_owner_route' with the success message in the URL
+        return redirect('/show_owner_route/?status=success&message=passenger%20entered%20the%20bus!')
+    else:
+        # Redirect to 'show_owner_route' with the seat full message in the URL
+        return redirect('/show_owner_route/?status=full&message=Seat%20full!')
+
+
+def exit_venue(request, owner_id):
+    owner = get_object_or_404(VenueOwner, id=owner_id)
+    if owner.occupancy > 0:
+        owner.occupancy -= 1
+        owner.save()
+        return redirect('/show_owner_route/?status=success&message=passenger%20exit%20the%20Bus!')
+
+    else:
+        return redirect('/show_owner_route/?status=full&message=No one to% xit!')
+
+
+        return JsonResponse({'status': 'error', 'message': 'No one to exit!'})
