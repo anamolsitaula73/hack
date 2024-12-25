@@ -1,181 +1,339 @@
-{% extends 'owner/base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="icon" href="/static/images/sarathi.png" type="image/x-icon">
 
-{% block title %}Bus Detail{% endblock %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sarathi</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swiper@11/swiper-bundle.min.css"
+    />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 
-{% block extra_css %}
+    <script src="https://unpkg.com/swiper@11/swiper-bundle.min.js"></script>
+    <style>
+      .transition-all {
+        transition: all 0.3s ease-in-out;
+      }
+      @media (max-width: 768px) {
+        .navbar {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body style="font-family: sans-serif;  color: white; margin: 0;">
+    <!-- Navbar -->
+ 
+    <nav
+    class="navbar"
+    style="
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(90deg, #ff7a18, #ff5403, #ea580c);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      font-family: Arial, sans-serif;
+    "
+  >
+    <!-- Logo -->
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <!-- Logo Wrapper -->
+      <div
+        style="
+          height: 100px;
+          width: 100px;
+          background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, rgba(244, 154, 98, 0) 70%);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          /* box-shadow: 0 0 20px 8px rgba(255, 255, 255, 0.3); */
+        "
+      >
+      <a href="/owner">
+        <img
+          src="/static/images/sarathi.png"
+          alt="SARATHI Logo"
+          style="
+            height: 85px;
+            width: 85px;
+            object-fit: cover;
+            border-radius: 50%;
+          "
+        /></a>
+      </div>
+  
+      <!-- Title -->
+      <a href="/owner" style="text-decoration:none;">
+        <span
+          style="
+            font-size: 2.25rem;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            background: linear-gradient(90deg, #ffffff, #ffd700, #fff5cc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+          "
+        >
+          SARATHI-<i style="font-size:24px;">Urban Mobility Hub</i>
+        </span>
+      </a>
+    </div>
+  
+    <!-- Navigation Menu -->
+    <ul
+      style="
+        display: flex;
+        gap: 2rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        align-items: center;
+      "
+    >
+      <li>
+        <a
+          href="/owner"
+          style="
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s ease-in-out, transform 0.3s;
+          "
+          onmouseover="this.style.color='#ffd700'; this.style.transform='scale(1.1)';"
+          onmouseout="this.style.color='white'; this.style.transform='scale(1)';"
+        >
+          Home
+        </a>
+      </li>
+      <li>
+        <a
+          href="{% url 'view-routes' %}"
+          style="
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s ease-in-out, transform 0.3s;
+          "
+          onmouseover="this.style.color='#ffd700'; this.style.transform='scale(1.1)';"
+          onmouseout="this.style.color='white'; this.style.transform='scale(1)';"
+        >
+          Routes
+        </a>
+      </li>
+    
+     
+      <li>
+        <a
+          href="#contact"
+          style="
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s ease-in-out, transform 0.3s;
+          "
+          onmouseover="this.style.color='#ffd700'; this.style.transform='scale(1.1)';"
+          onmouseout="this.style.color='white'; this.style.transform='scale(1)';"
+        >
+          Contact
+        </a>
+      </li>
+    </ul>
+  
 
-
-
-
-
+  </nav>
+  <br>
+  <br>
+  <style>
+    #myBtn {
+      display: none; 
+      position: fixed;
+      bottom: 40px;
+      right: 15px;
+      z-index: 9999;
+      font-size: 20px;
+      border: none;
+      outline: none;
+      background-color: #164193;
+      color: white;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 10px;
+      transition: transform 1s ease, opacity 1s ease;
+      font-family: "Arial Unicode MS", "Segoe UI Symbol", sans-serif;
+    }
+    #myBtn:hover{
+      background-color: #164193;
+    
+    }
+     </style>
+    <button onclick="topFunction()" id="myBtn" title="Go to top"><img src="/static/images/up1.png" style="width: 25px; height: 25px;">
+    </button>
+    <script>
+    
+    // Get the button
+    let mybutton = document.getElementById("myBtn");
+    
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function() {
+     scrollFunction();
+    };
+    
+    function scrollFunction() {
+     if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+         mybutton.style.display = "block";
+         
+     } else {
+         mybutton.style.display = "none";
+     }
+    }
+    
+    // When the user clicks on the button, scroll to the top of the document with smooth behavior
+    function topFunction() {
+     window.scrollTo({
+         top: 0,
+         behavior: 'smooth' // This adds the smooth scrolling effect
+     });
+    }
+    </script>
 <style>
-    /* General Body Styling */
-    body {
-        background-color: #f0f2f5;
-        font-family: 'Arial', sans-serif;
+    /* Container for the bus details */
+    .bus-detail-container {
+        color: red !important;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        max-width: 900px;
+        margin: 0 auto;
+        font-family: 'Roboto', sans-serif;
     }
 
-    .venue-detail-container {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-        padding: 20px;
+    /* Heading */
+    .bus-detail-heading {
+        font-size: 28px;
+        color: #2c3e50;
+        margin-bottom: 30px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    /* Bus item */
+    .bus-item {
         background-color: #fff;
-        border: 2px solid orange; /* Orange border */
-        border-radius: 10px;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        padding: 25px;
+        margin-bottom: 25px;
+        border-radius: 8px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease;
     }
 
-    .venue-detail-heading {
-        color: #333;
-        margin-bottom: 20px;
+    .bus-item:hover {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
     }
 
-    .venue-item {
-        background-color: #f9f9f9;
-        padding: 20px;
-        margin-bottom: 20px;
-        border-radius: 10px;
-        border: 1px solid #ddd;
-        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease, background-color 0.3s ease;
+    .bus-item h3 {
+        font-size: 22px;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-weight: 500;
     }
 
-    .venue-item:hover {
-        transform: scale(1.02);
-        background-color: #e9ecef;
+    /* Image styling */
+    .bus-image {
+        max-width: 200px;
+        height: auto;
+        margin:auto;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
     }
 
-    .venue-item a {
+    .add-image-link {
         display: inline-block;
-        background-color: #007bff; /* Blue */
-        color: #fff;
-        text-decoration: none;
-        padding: 12px 24px;
-        border-radius: 6px;
+        background-color: #f39c12;
+        color: white;
+        padding: 12px 28px;
         font-size: 16px;
-        font-weight: bold;
-        text-transform: uppercase;
-        transition: background-color 0.3s ease, transform 0.3s ease;
-        margin-right: 10px;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        margin-top: 10px;
     }
 
-    .venue-item a:hover {
-        background-color: #0056b3; /* Darker Blue */
-        transform: scale(1.05);
+    .add-image-link:hover {
+        background-color: #e67e22;
     }
 
-    .venue-details {
-        margin-bottom: 20px;
+    /* Form styling */
+    .bus-edit-form {
+        background-color: #fff;
+        padding: 35px;
+        border-radius: 8px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        margin-top: 30px;
     }
 
-    .edit-venue-container {
-        margin-top: 20px;
+    .bus-edit-form p {
+        margin-bottom: 18px;
     }
 
-    .edit-form {
-        margin-top: 20px;
-        border: 1px solid #ddd;
-        padding: 20px;
-        border-radius: 10px;
-        background-color: #f9f9f9;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .edit-form label {
-        font-weight: bold;
+    .bus-edit-form label {
+        font-weight: 600;
+        color: #34495e;
         margin-bottom: 8px;
         display: block;
     }
 
-    .edit-form input[type="text"],
-    .edit-form input[type="email"],
-    .edit-form textarea,
-    .edit-form input[type="number"],
-    .edit-form input[type="file"] {
-        width: calc(100% - 40px);
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        margin-bottom: 10px;
-        font-size: 14px;
-        background-color: #fff;
-        transition: border-color 0.3s ease;
+    .bus-edit-form input, .bus-edit-form textarea {
+        width: 100%;
+        padding: 12px;
+        margin-top: 6px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 16px;
+        color: #34495e;
+        background-color: #f7f9fc;
     }
 
-    .edit-form input[type="text"]:focus,
-    .edit-form input[type="email"]:focus,
-    .edit-form textarea:focus,
-    .edit-form input[type="number"]:focus,
-    .edit-form input[type="file"]:focus {
-        border-color: #ff9800; /* Orange border on focus */
-    }
-
-    .edit-form textarea {
+    .bus-edit-form textarea {
         height: 120px;
     }
 
-    .edit-form button {
-        background-color: #ff9800; /* Orange button */
-        color: #fff;
+    .bus-edit-form button {
+        background-color: #f39c12;
+        color: white;
+        padding: 14px 32px;
+        font-size: 16px;
         border: none;
-        padding: 10px 20px;
         border-radius: 6px;
         cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.3s ease;
-        font-size: 16px;
-        margin-top: 10px;
+        margin-top: 25px;
+        transition: background-color 0.3s ease;
     }
 
-    .edit-form button:hover {
-        background-color: #e68900; /* Darker Orange on hover */
-        transform: scale(1.05);
+    .bus-edit-form button:hover {
+        background-color: #e67e22;
     }
 
-    .uploaded-image {
-        max-width: 300px;
-        max-height: 300px;
-        width: 300px;
-        height: 300px;
-        display: block;
-        margin: 0 auto;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease;
-        cursor: pointer;
-    }
-
-    .uploaded-image:hover {
-        transform: scale(1.05);
-    }
-
-    .no-venues-message {
-        color: #666;
-        margin-bottom: 20px;
-    }
-
-    .register-venue-link {
-        display: inline-block;
-        background-color: #007bff; /* Blue */
-        color: #fff;
-        text-decoration: none;
-        padding: 12px 24px;
-        border-radius: 6px;
-        font-size: 16px;
-        font-weight: bold;
-        text-transform: uppercase;
-        transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
-    }
-
-    .register-venue-link:hover {
-        background-color: #0056b3; /* Darker Blue */
-        color: #fff;
-        transform: scale(1.05);
-    }
-
-    .modal {
+    /* Modal styling */
+    .image-modal {
         display: none;
         position: fixed;
-        z-index: 1;
+        z-index: 100;
         left: 0;
         top: 0;
         width: 100%;
@@ -185,55 +343,67 @@
         transition: opacity 0.3s ease;
     }
 
-    .modal-content {
+    .image-modal-content {
         background-color: #fff;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
-        max-width: 500px;
+        margin: 10% auto;
+        padding: 25px;
         border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        animation: fadeIn 0.5s ease;
+        width: 70%;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
-    .close {
+    .close-modal {
         color: #aaa;
-        float: right;
-        font-size: 28px;
+        font-size: 30px;
         font-weight: bold;
-        transition: color 0.3s ease;
-    }
-
-    .close:hover,
-    .close:focus {
-        color: black;
-        text-decoration: none;
+        position: absolute;
+        top: 12px;
+        right: 25px;
         cursor: pointer;
     }
 
+    .close-modal:hover,
+    .close-modal:focus {
+        color: #333;
+        text-decoration: none;
+    }
+
+    /* Error message styling */
     .error-message {
-        color: red;
-        margin-bottom: 20px;
+        color: #e74c3c;
+        font-weight: 600;
+        margin-bottom: 25px;
     }
 
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
-        to {
-            opacity: 1;
-        }
+    /* No venues message styling */
+    .no-bus-message {
+        font-size: 20px;
+        font-weight: 600;
+        color: #f39c12;
+        margin-bottom: 30px;
+        text-align: center;
     }
+
+    /* Button for registering bus */
+    .register-bus-btn {
+        display: inline-block;
+        background-color: #ea580c;
+        color: white;
+        padding: 14px 32px;
+        font-size: 16px;
+        text-decoration: none;
+        border-radius: 6px;
+        transition: background-color 0.3s ease;
+    }
+
+    .register-bus-btn:hover {
+        background-color: #e67e22;
+    }
+
 </style>
-{% endblock %}
 
-{% block content %}
-<div class="venue-detail-container">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-
-    <h2 class="venue-detail-heading">Bus Detail</h2>
-    </div>
+<div class="bus-detail-container">
+    <h2 class="bus-detail-heading" style="color:#ea580c;" >Bus Detail</h2>
 
     {% if error_message %}
         <p class="error-message">{{ error_message }}</p>
@@ -242,18 +412,19 @@
     {% if venues %}
         <ul>
             {% for venue in venues %}
-                <div class="venue-item">
+                <div class="bus-item">
                     <h3>{{ venue.name }}</h3>
-
+                    <center>
                     {% if venue.image %}
-                        <img src="{{ venue.image.url }}" alt="Venue Image" class="uploaded-image" onclick="openImageModal('{{ venue.id }}')">
+                        <img src="{{ venue.image.url }}" alt="Bus Image" class="bus-image" onclick="openImageModal('{{ venue.id }}')">
                     {% else %}
                         <p>No image available.</p>
-                        <a href="#" class="register-venue-link" onclick="openImageModal('{{ venue.id }}')">Add Image</a>
+                        <a href="#" class="add-image-link" onclick="openImageModal('{{ venue.id }}')">Add Image</a>
                     {% endif %}
+                    </center>
 
-                    <div class="edit-venue-container">
-                        <form method="post" action="{% url 'edit_venue' pk=venue.id %}" enctype="multipart/form-data" class="edit-form">
+                    <div class="bus-edit-container">
+                        <form method="post" action="{% url 'edit_venue' pk=venue.id %}" enctype="multipart/form-data" class="bus-edit-form">
                             {% csrf_token %}
                             <p><label for="id_name">Driver Name:</label> <input type="text" name="name" id="id_name" value="{{ venue.driver_name }}"></p>
                             <p><label for="id_address">Address:</label> <input type="text" name="address" id="id_address" value="{{ venue.address }}"></p>
@@ -266,19 +437,13 @@
                     </div>
                     <br>
                     <center>
-                    {% comment %} <a href="{% url 'owner_pricing_packages' venue.id %}" class="venue-item a">View Packages</a> {% endcomment %}
-                    {% comment %} <a href="{% url 'owner_add_pricing_package' venue.id %}" class="venue-item a">Add Package</a> {% endcomment %}
-                    {% comment %} <a href="{% url 'view_bookings' venue.id %}" class="venue-item a">View Bookings</a> {% endcomment %}
-                    <a href="{% url 'show_owner_route' %}" class="venue-item a">Show Route</a>
-                    
-
-
-
+                        <a href="{% url 'show_owner_route' %}" class="register-bus-btn">Show My Route</a>
                     </center>
-                    <!-- The Modal for Image Upload -->
-                    <div id="image-modal-{{ venue.id }}" class="modal">
-                        <div class="modal-content">
-                            <span class="close" onclick="closeImageModal('{{ venue.id }}')">&times;</span>
+
+                    <!-- Image Upload Modal -->
+                    <div id="image-modal-{{ venue.id }}" class="image-modal">
+                        <div class="image-modal-content">
+                            <span class="close-modal" onclick="closeImageModal('{{ venue.id }}')">&times;</span>
                             <form method="post" action="{% url 'edit_venue_image' venue.id %}" enctype="multipart/form-data">
                                 {% csrf_token %}
                                 <label for="id_image_{{ venue.id }}">Upload Image:</label>
@@ -291,34 +456,36 @@
             {% endfor %}
         </ul>
     {% else %}
-        <p class="no-venues-message">No venues found for your email.</p>
-        <a href="{% url 'home_owner' %}" class="register-venue-link">Register Your Bus Detail</a>
+        <div class="no-bus-message">
+            <p>No Bus Detail Found</p>
+            <a href="{% url 'home_owner' %}" class="register-bus-btn">Register Your Bus Detail</a>
+        </div>
     {% endif %}
 </div>
-
 
 <script>
     function openImageModal(id) {
         var modal = document.getElementById('image-modal-' + id);
         modal.style.display = 'block';
         setTimeout(function() {
-            modal.style.opacity = 1;
+            modal.style.opacity = '1';
         }, 10);
     }
 
     function closeImageModal(id) {
         var modal = document.getElementById('image-modal-' + id);
-        modal.style.opacity = 0;
+        modal.style.opacity = '0';
         setTimeout(function() {
             modal.style.display = 'none';
         }, 300);
     }
 </script>
+<br>
+<footer id="contact"
+style="background-color: black; padding: 2rem; text-align: center; color: white;bottom:0;position:relative;"
+>
+<p>&copy; 2024 TransportApp. All Rights Reserved.</p>
+<p>Contact us: info@transportapp.com | </p>
 
-
-
-    
-  
-
-{% endblock %}
-
+</footer>
+</body>

@@ -10,7 +10,7 @@ urlpatterns = [
  
     path('', home_view, name='home'),
     path('', include('venues.urls')), 
-    path('', include('owner.urls')), 
+     path('', include('owner.urls')), 
     path('verify-otp/', verify_otp_view, name='verify_otp'),
     path('resend-otp/', resend_otp_view, name='resend_otp'),
     path('owner/<int:venue_id>/', user_pricing_packages, name='user_pricing_packages'),

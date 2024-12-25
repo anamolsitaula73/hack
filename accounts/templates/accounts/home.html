@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <link rel="icon" href="/static/images/sarathi.png" type="image/x-icon">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sarathi</title>
@@ -308,7 +309,7 @@
     
       <!-- Call-to-Action Button -->
       <a
-        href="#routes"
+        href="{% url 'view-routes' %}"
         style="
           display: inline-block;
           background: linear-gradient(to right, #ea580c, #facc15);
@@ -388,24 +389,29 @@
               z-index: 10;
             "
           >
-            <h1 style="font-size: 3rem; font-weight: bold; margin-bottom: 1rem;">
+            <h1 style="font-size: 3rem; font-weight: bold; margin-bottom: 1rem;z-index:999;">
               Let's Go Now!
             </h1>
-            <button
-              style="
-                background-color: #ea580c;
-                padding: 0.5rem 1.5rem;
-                border-radius: 0.5rem;
-                border: none;
-                color: white;
-                cursor: pointer;
-                transition: background-color 0.3s;
-              "
-              onmouseover="this.style.backgroundColor='#c2410c'"
-              onmouseout="this.style.backgroundColor='#ea580c'"
-            >
-              Find Routes
-            </button>
+            <a
+        href="{% url 'view-routes' %}"
+        style="
+          display: inline-block;
+          background: linear-gradient(to right, #ea580c, #facc15);
+          color: white;
+          font-weight: bold;
+          padding: 0.75rem 2rem;
+          font-size: 1.2rem;
+          border-radius: 0.75rem;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+          text-decoration: none;
+          transition: all 0.3s ease-in-out;
+          z-index:999;
+        "
+        onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(0, 0, 0, 0.3)';"
+        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 10px rgba(0, 0, 0, 0.2)';"
+      >
+        Find Routes
+      </a>
           </div>
         </section>
         
@@ -472,11 +478,7 @@
         onmouseout="this.style.transform='scale(1)'; this.style.backgroundColor='rgba(0, 0, 0, 0.6)'"
       >
         <div style="text-align: center;">
-          <img
-            src="https://img.icons8.com/ios/452/speedometer.png"
-            alt="Seamless Experience"
-            style="width: 50px; margin-bottom: 1.5rem;"
-          />
+          
         </div>
         <h3 style="color: #ffd700; font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">
           Seamless Experience
@@ -501,11 +503,7 @@
         onmouseout="this.style.transform='scale(1)'; this.style.backgroundColor='rgba(0, 0, 0, 0.6)'"
       >
         <div style="text-align: center;">
-          <img
-            src="https://img.icons8.com/ios/452/checked-flag.png"
-            alt="Reliable Vehicles"
-            style="width: 50px; margin-bottom: 1.5rem;"
-          />
+          
         </div>
         <h3 style="color: #ffd700; font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">
           Reliable Vehicles
@@ -530,11 +528,7 @@
         onmouseout="this.style.transform='scale(1)'; this.style.backgroundColor='rgba(0, 0, 0, 0.6)'"
       >
         <div style="text-align: center;">
-          <img
-            src="https://img.icons8.com/ios/452/user-group-man-man.png"
-            alt="Customer Focused"
-            style="width: 50px; margin-bottom: 1.5rem;"
-          />
+         
         </div>
         <h3 style="color: #ffd700; font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">
           Customer Focused
@@ -559,11 +553,7 @@
         onmouseout="this.style.transform='scale(1)'; this.style.backgroundColor='rgba(0, 0, 0, 0.6)'"
       >
         <div style="text-align: center;">
-          <img
-            src="https://img.icons8.com/ios/452/earth-globe.png"
-            alt="Eco-Friendly"
-            style="width: 50px; margin-bottom: 1.5rem;"
-          />
+        
         </div>
         <h3 style="color: #ffd700; font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">
           Eco-Friendly Transport

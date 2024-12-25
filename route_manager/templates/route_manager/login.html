@@ -1,24 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <link rel="icon" href="/static/images/sarathi.png" type="image/x-icon">
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sarathi</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swiper@11/swiper-bundle.min.css"
+    />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+
+    <script src="https://unpkg.com/swiper@11/swiper-bundle.min.js"></script>
+    <style>
+      .transition-all {
+        transition: all 0.3s ease-in-out;
+      }
+      @media (max-width: 768px) {
+        .navbar {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body style="font-family: sans-serif;  margin: 0;">
+    <!-- Navbar -->
+ 
+    <nav
+    class="navbar"
+    style="
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(90deg, #ff7a18, #ff5403, #ea580c);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 99999;
+      font-family: Arial, sans-serif;
+    "
+  >
+    <!-- Logo -->
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <!-- Logo Wrapper -->
+      <div
+        style="
+          height: 100px;
+          width: 100px;
+          background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, rgba(244, 154, 98, 0) 70%);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          /* box-shadow: 0 0 20px 8px rgba(255, 255, 255, 0.3); */
+        "
+      >
+      <a href="{% url 'home' %}">
+        <img
+          src="/static/images/sarathi.png"
+          alt="SARATHI Logo"
+          style="
+            height: 85px;
+            width: 85px;
+            object-fit: cover;
+            border-radius: 50%;
+          "
+        /></a>
+      </div>
+  
+      <!-- Title -->
+      <a href="{% url 'home' %}" style="text-decoration:none;">
+        <span
+          style="
+            font-size: 2.25rem;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            background: linear-gradient(90deg, #ffffff, #ffd700, #fff5cc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+          "
+        >
+          SARATHI-<i style="font-size:24px;">Urban Mobility Hub</i>
+        </span>
+      </a>
+    </div>
+  
+    <!-- Navigation Menu -->
+    <ul
+      style="
+        display: flex;
+        gap: 2rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        align-items: center;
+      "
+    >
+    <li>
+        <a
+          href="{% url 'home' %}"
+          style="
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s ease-in-out, transform 0.3s;
+          "
+          onmouseover="this.style.color='#ffd700'; this.style.transform='scale(1.1)';"
+          onmouseout="this.style.color='white'; this.style.transform='scale(1)';"
+        >
+          Home
+        </a>
+      </li>
+      
+     
+      
+     
+      <li>
+        <a
+          href="#contact"
+          style="
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s ease-in-out, transform 0.3s;
+          "
+          onmouseover="this.style.color='#ffd700'; this.style.transform='scale(1.1)';"
+          onmouseout="this.style.color='white'; this.style.transform='scale(1)';"
+        >
+          Contact
+        </a>
+      </li>
+      
+      
+    </ul>
+  
+
+  </nav>
+  <style>
+    #myBtn {
+      display: none; 
+      position: fixed;
+      bottom: 40px;
+      right: 15px;
+      z-index: 9999;
+      font-size: 20px;
+      border: none;
+      outline: none;
+      background-color: #164193;
+      color: white;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 10px;
+      transition: transform 1s ease, opacity 1s ease;
+      font-family: "Arial Unicode MS", "Segoe UI Symbol", sans-serif;
+    }
+    #myBtn:hover{
+      background-color: #164193;
+    
+    }
+     </style>
+    <button onclick="topFunction()" id="myBtn" title="Go to top"><img src="/static/images/up1.png" style="width: 25px; height: 25px;">
+    </button>
+    <script>
+    
+    // Get the button
+    let mybutton = document.getElementById("myBtn");
+    
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function() {
+     scrollFunction();
+    };
+    
+    function scrollFunction() {
+     if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+         mybutton.style.display = "block";
+         
+     } else {
+         mybutton.style.display = "none";
+     }
+    }
+    
+    // When the user clicks on the button, scroll to the top of the document with smooth behavior
+    function topFunction() {
+     window.scrollTo({
+         top: 0,
+         behavior: 'smooth' // This adds the smooth scrolling effect
+     });
+    }
+    </script>
+
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Route Manager</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+  
 
         .login-container {
+            
+            width:30%;
             background: #fff;
-            padding: 20px;
+            padding: 120px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
             text-align: center;
@@ -58,7 +248,11 @@
         }
     </style>
 </head>
-<body>
+<body><center>
+    
+    <br>
+    <br>
+    <br>
     <div class="login-container">
         <h1>Route Manager Login</h1>
         <form method="post">
@@ -76,5 +270,15 @@
         </div>
         {% endif %}
     </div>
+</body>
+</html>
+
+<br>
+<br>
+<footer id="contact"style="background-color: black; padding: 2rem; text-align: center; color: white;bottom:0;position:relative;">
+<p>&copy; 2024 Sarathi-Urban Mobility Hub. All Rights Reserved.</p>
+<p>Contact us: anmolsitaula73@gmail.com | </p>
+
+</footer>
 </body>
 </html>

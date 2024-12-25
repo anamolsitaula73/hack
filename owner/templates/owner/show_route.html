@@ -1,4 +1,10 @@
-<!DOCTYPE html>
+{% extends 'accounts/base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% load static %}
+
+{% block content %}<!DOCTYPE html>
 <html>
 <head>
     <title>Real-Time Location</title>
@@ -43,6 +49,7 @@
             display: none;
             position: fixed;
             top: 50%;
+            color:black;
             left: 50%;
             transform: translate(-50%, -50%);
             padding: 20px;
@@ -139,8 +146,7 @@
         <h2>Route Details</h2>
         <h3>Route: {{ owner_route.route_name }}</h3>
 
-        <h2>Bus Stops</h2>
-        <table>
+        <table hidden>
             <thead>
                 <tr>
                     <th>Stop Name</th>
@@ -289,7 +295,7 @@
     
         .toggle-button:hover {
             background-color: darkgreen; /* Change to dark green on hover */
-            transform: scale(1.1); /* Slightly increase size on hover */
+            transform: scale(1.01); /* Slightly increase size on hover */
         }
     </style>
     
@@ -386,3 +392,5 @@
             
 </body>
 </html>
+{% endblock %}
+

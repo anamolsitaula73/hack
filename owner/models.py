@@ -31,7 +31,7 @@ class Venue(models.Model):
     id = models.AutoField(primary_key=True)
     driver_name = models.CharField(max_length=100)  # Changed name to driver_name
     address = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.TextField(null=True,)
     contact_email = models.EmailField(unique=True)
     zip_code = models.CharField(max_length=10, default=44207)  # New field for zip code
     seats = models.PositiveIntegerField(default=0)  # Changed total_slots to seats
